@@ -59,4 +59,19 @@ describe('UserDeleteDto', () => {
       deletedEntity.deletedAt ? deletedEntity.deletedAt.toISOString() : null,
     );
   });
+
+  it('should create a valid UserDeleteResponseDto from UserEntity with null deletedAt', () => {
+    const entity = UserEntity.create({
+      email: 'test@example.com',
+      name: 'Test User',
+    });
+    const responseDto = UserDeleteDtoMapper.fromEntity(entity);
+
+    expect(responseDto.id).toEqual(entity.id);
+    expect(responseDto.email).toEqual(entity.email);
+    expect(responseDto.name).toEqual(entity.name);
+    expect(responseDto.createdAt).toEqual(entity.createdAt.toISOString());
+    expect(responseDto.updatedAt).toEqual(entity.updatedAt.toISOString());
+    expect(responseDto.deletedAt).toBeNull();
+  });
 });
