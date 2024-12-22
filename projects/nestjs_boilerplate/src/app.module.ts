@@ -13,15 +13,6 @@ const infrastructureDatabaseModule = TypeOrmModule.forRootAsync({
   },
 });
 
-console.log(
-  `${process.cwd()}/.env.${process.env.NODE_ENV}`,
-  `${process.cwd()}/.env`,
-  `.env`,
-  `.env.${process.env.NODE_ENV}`,
-  `../.env`,
-  `../.env.${process.env.NODE_ENV}`,
-);
-
 @Module({
   imports: [
     ConfigModule.forRoot({

@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { UserEntity } from '../../user.entity';
 import { UserSchema } from './user.repo.schema';
+import { Mutable } from '../../../../utils/mutable';
 
 @Injectable()
 export class UserRepositoryMapper {

@@ -1,6 +1,7 @@
 import { IsEmail, MinLength, MaxLength, IsDate } from 'class-validator';
 import { IsULID } from '../../utils/is-ulid';
 import { ulid } from 'ulid';
+import { Mutable } from '../../utils/mutable';
 
 interface User {
   readonly id: string;
