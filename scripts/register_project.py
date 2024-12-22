@@ -36,7 +36,7 @@ def register_project(name, purpose, date_started, date_modified):
         
         project_heading_found = False
         for i, line in enumerate(lines):
-            if line.strip() == "# Projects":
+            if line.strip() == "## Projects":
                 lines.insert(i + 1, row + "\n")
                 project_heading_found = True
                 break
@@ -49,38 +49,11 @@ def register_project(name, purpose, date_started, date_modified):
 
     print(f"Project '{name}' registered successfully.")
 
-def update_project(name):
-    """Updates the 'Date Modified' column for a project in the README.md file."""
-    today = date.today().strftime("%Y-%m-%d")
-    snake_case_name = to_snake_case(name)
-    
-    if not os.path.exists("README.md"):
-        print("Error: README.md not found.")
-        sys.exit(1)
-    
-    with open("README.md", "r+") as f:
-        lines = f.readlines()
-        updated = False
-        for i, line in enumerate(lines):
-            if f"| [{name}](projects/{snake_case_name}) |" in line:
-                parts = line.split("|")
-                if len(parts) == 5:
-                    parts[4] = f" {today} |"
-                    lines[i] = "|".join(parts) + "\n"
-                    updated = True
-                    break
-        if not updated:
-            print(f"Error: Project '{name}' not found in README.md")
-            sys.exit(1)
-        f.seek(0)
-        f.writelines(lines)
-    print(f"Project '{name}' modified date updated to {today}.")
-
 
 if __name__ == "__main__":
     today = date.today().strftime("%Y-%m-%d")
     if len(sys.argv) < 2:
-        print("Usage: register_project.py <register|update> [project_name] [project_purpose] [date_started] [date_modified]")
+        print("Usage: register_project.py <register> [project_name] [project_purpose] [date_started] [date_modified]")
         sys.exit(1)
 
     action = sys.argv[1]
@@ -111,12 +84,6 @@ if __name__ == "__main__":
             print(f"Directory '{project_path}' already exists.")
 
         register_project(name, purpose, date_started, date_modified)
-    elif action == "update":
-        if len(sys.argv) != 3:
-             name = input("Enter project name to update: ")
-        else:
-            name = sys.argv[2]
-        update_project(name)
     else:
-        print("Invalid action. Use 'register' or 'update'.")
+        print("Invalid action. Use 'register'.")
         sys.exit(1)
