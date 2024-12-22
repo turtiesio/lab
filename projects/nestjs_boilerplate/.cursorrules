@@ -1,0 +1,39 @@
+# Core Principles
+
+Interface-Driven!!!!!!!!!!!!!!!!!!(VERY IMPORTANT)
+All modules will expose an interface and have at least 1 implementation (can be a mock at start). With DTO, you can have multiple implementations.
+
+Test-Driven Development!!!(ALSO IMPORTANT)
+Every implementation requires a unit test, ensuring reliability from the beginning.
+
+Feature-Driven
+Organize code by features (e.g., auth, workspaces, uploads) rather than layers (controllers, services, repositories) at the highest level. This promotes better understanding, maintainability, and easier collaboration within a small team.
+
+Decoupling
+Keep components loosely coupled through interfaces and dependency injection to enable changes and reuse.
+
+Convention over Configuration
+Adopt conventions for directory and file naming to reduce overhead.
+
+## Tools
+
+- NestJS
+- yarn
+
+## Coding Style
+
+- SOLID, DRY, KISS, YAGNI
+- Typescript: NO `var`, NO `any`
+- File naming: kebab-case
+
+## How to
+
+Let's say you want to add a "notifications" feature. With this structure, you would:
+
+Create a notifications folder within the apps/api/src folder with:
+notifications.module.ts
+notifications.controller.ts
+notifications.dto.ts
+notifications.service.ts
+notifications.service.interface.ts
+notifications.service.spec.ts
