@@ -2,6 +2,7 @@ import { IsEmail, MinLength, MaxLength, IsDate } from 'class-validator';
 import { IsULID } from '../../utils/is-ulid';
 import { ulid } from 'ulid';
 import { Mutable } from '../../utils/mutable';
+import { UserWorkspaceEntity } from '../user-workspace/user-workspace.entity';
 
 interface User {
   readonly id: string;
@@ -10,6 +11,7 @@ interface User {
   readonly createdAt: Date;
   readonly updatedAt: Date;
   readonly deletedAt: Date | null;
+  readonly workspaces: UserWorkspaceEntity[];
 
   changeName(name: string): User;
   setDeleted(): User;
@@ -34,6 +36,8 @@ export class UserEntity implements User {
 
   @IsDate()
   readonly deletedAt: Date | null;
+
+  readonly workspaces: UserWorkspaceEntity[];
 
   // Domain business logic
 

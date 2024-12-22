@@ -8,13 +8,10 @@ import {
 } from 'typeorm';
 import { UserWorkspaceSchema } from '../../../user-workspace/infrastructure/repository/user-workspace.schema';
 
-@Entity('users')
-export class UserSchema {
+@Entity('workspaces')
+export class WorkspaceSchema {
   @PrimaryColumn()
   id: string;
-
-  @Column()
-  email: string;
 
   @Column()
   name: string;
@@ -28,6 +25,9 @@ export class UserSchema {
   @Column({ nullable: true })
   deletedAt: Date | null;
 
-  @OneToMany(() => UserWorkspaceSchema, (userWorkspace) => userWorkspace.user)
-  workspaces: UserWorkspaceSchema[];
+  @OneToMany(
+    () => UserWorkspaceSchema,
+    (userWorkspace) => userWorkspace.workspace,
+  )
+  users: UserWorkspaceSchema[];
 }
