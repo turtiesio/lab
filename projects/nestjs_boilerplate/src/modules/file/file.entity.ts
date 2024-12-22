@@ -47,8 +47,9 @@ export class FileEntity implements File {
 
   public setDeleted(): FileEntity {
     const file = this as Mutable<FileEntity>;
-    file.deletedAt = new Date();
-    file.updatedAt = new Date();
+    const now = new Date();
+    file.deletedAt = now;
+    file.updatedAt = now;
     return file;
   }
 

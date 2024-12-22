@@ -1,10 +1,12 @@
-import databaseConfig from '../modules/database/database.config';
-import { configLoader } from '../utils/config-loader';
-import { AppConfig } from '../app.config';
+import databaseConfig from '../modules/database/config/database.config';
+import appConfig from './app.config';
 
-const appConfigFactory = configLoader<AppConfig>('app', AppConfig);
-
-export default () => ({
-  ...appConfigFactory(),
+export default async () => ({
+  ...appConfig(),
   ...databaseConfig(),
 });
+
+type UnwrapPromise<T> = T extends Promise<infer U> ? U : T;
+
+export type Configuration = UnwrapPromise<ReturnType<typeof appConfig>> &
+  UnwrapPromise<ReturnType<typeof databaseConfig>>;

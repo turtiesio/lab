@@ -2,6 +2,7 @@
 
 1. Entity: is pure entity. Not typeorm entity
 2. Schema: is a typeorm entity
+3. Tests: under modules `tests` directory
 
 Interface-Driven!!!!!!!!!!!!!!!!!!(VERY IMPORTANT)
 All modules will expose an interface and have at least 1 implementation (can be a mock at start). With DTO, you can have multiple implementations.

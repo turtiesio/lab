@@ -7,11 +7,14 @@ export function configLoader<T extends object>(
   configClass: new () => T,
 ): ConfigFactory<T> {
   return registerAs(token, () => {
-    const envConfig = process.env[token.toUpperCase()];
-    const config = plainToInstance(configClass, {
-      ...process.env,
-      ...(typeof envConfig === 'object' && envConfig !== null ? envConfig : {}),
+    const envConfig = { ...process.env };
+    const config = plainToInstance(configClass, envConfig, {
+      enableImplicitConversion: true,
     });
+
+    // if (config && 'PORT' in config && typeof config['PORT'] === 'string') {
+    //   config['PORT'] = parseInt(config['PORT'], 10);
+    // }
 
     const errors = validateSync(config, {
       skipMissingProperties: false,

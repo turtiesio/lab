@@ -1,3 +1,4 @@
+import { Transform } from 'class-transformer';
 import { IsEnum, IsInt, IsOptional, Min } from 'class-validator';
 
 export enum NodeEnv {
@@ -14,7 +15,8 @@ export class AppConfig {
   @IsInt()
   @Min(0)
   @IsOptional()
-  PORT = 3000;
+  @Transform(({ value }) => parseInt(value, 10))
+  PORT: number = 3000;
 }
 
 export default AppConfig;
