@@ -52,3 +52,8 @@ build/config\.gypi
 .npmrc
 pnpm-lock.yaml
 /.history
+
+dist/
+
+.env.*
+!.env.example
