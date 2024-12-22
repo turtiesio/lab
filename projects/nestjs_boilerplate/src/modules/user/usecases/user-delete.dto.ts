@@ -1,16 +1,16 @@
 import { UserEntity } from '../user.entity';
 import { IsULID } from '../../../utils/is-ulid';
+import { IsNullable } from '../../../utils/is-nullable';
 import { IsEmail, IsISO8601, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNullable } from 'src/utils/is-nullable';
 
-export class DeleteUserRequestDto {
+export class UserDeleteRequestDto {
   @ApiProperty()
   @IsULID()
   id: string;
 }
 
-export class DeleteUserResponseDto {
+export class UserDeleteResponseDto {
   @ApiProperty()
   @IsULID()
   id: string;
@@ -27,6 +27,10 @@ export class DeleteUserResponseDto {
   @IsISO8601()
   createdAt: string;
 
+  @ApiProperty()
+  @IsISO8601()
+  updatedAt: string;
+
   @ApiProperty({
     nullable: true,
     type: 'string',
@@ -34,13 +38,16 @@ export class DeleteUserResponseDto {
   @IsNullable()
   @IsISO8601()
   deletedAt: string | null;
+}
 
-  static fromEntity(entity: UserEntity): DeleteUserResponseDto {
-    const response = new DeleteUserResponseDto();
+export class UserDeleteDtoMapper {
+  static fromEntity(entity: UserEntity): UserDeleteResponseDto {
+    const response = new UserDeleteResponseDto();
     response.id = entity.id;
     response.email = entity.email;
     response.name = entity.name;
     response.createdAt = entity.createdAt.toISOString();
+    response.updatedAt = entity.updatedAt.toISOString();
     response.deletedAt = entity.deletedAt
       ? entity.deletedAt.toISOString()
       : null;
