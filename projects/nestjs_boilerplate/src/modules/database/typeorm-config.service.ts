@@ -1,54 +1,37 @@
 import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { TypeOrmModuleOptions, TypeOrmOptionsFactory } from '@nestjs/typeorm';
-import { AllConfigType } from '../config/config.all.type';
+import databaseConfig from './database.config';
 
 @Injectable()
 export class TypeOrmConfigService implements TypeOrmOptionsFactory {
-  constructor(private configService: ConfigService<AllConfigType>) {}
-
-  createTypeOrmOptions(): TypeOrmModuleOptions {
+  async createTypeOrmOptions(): Promise<TypeOrmModuleOptions> {
+    const config = await databaseConfig();
     return {
-      type: this.configService.get('database.type', { infer: true }),
-      url: this.configService.get('database.url', { infer: true }),
-      host: this.configService.get('database.host', { infer: true }),
-      port: this.configService.get('database.port', { infer: true }),
-      username: this.configService.get('database.username', { infer: true }),
-      password: this.configService.get('database.password', { infer: true }),
-      database: this.configService.get('database.name', { infer: true }),
-      synchronize: this.configService.get('database.synchronize', {
-        infer: true,
-      }),
+      type: config.DATABASE_TYPE || 'postgres',
+      url: config.DATABASE_URL,
+      host: config.DATABASE_HOST,
+      port: config.DATABASE_PORT,
+      username: config.DATABASE_USERNAME,
+      password: config.DATABASE_PASSWORD,
+      database: config.DATABASE_NAME,
+      synchronize: config.DATABASE_SYNCHRONIZE,
       dropSchema: false,
       keepConnectionAlive: true,
-      logging:
-        this.configService.get('app.nodeEnv', { infer: true }) !== 'production',
+      logging: process.env.NODE_ENV !== 'production',
       entities: [__dirname + '/../../**/*.entity{.ts,.js}'],
       migrations: [__dirname + '/migrations/**/*{.ts,.js}'],
       cli: {
         entitiesDir: 'src',
-
         subscribersDir: 'subscriber',
       },
       extra: {
-        // based on https://node-postgres.com/apis/pool
-        // max connection pool size
-        max: this.configService.get('database.maxConnections', { infer: true }),
-        ssl: this.configService.get('database.sslEnabled', { infer: true })
+        max: config.DATABASE_MAX_CONNECTIONS,
+        ssl: config.DATABASE_SSL_ENABLED
           ? {
-              rejectUnauthorized: this.configService.get(
-                'database.rejectUnauthorized',
-                { infer: true },
-              ),
-              ca:
-                this.configService.get('database.ca', { infer: true }) ??
-                undefined,
-              key:
-                this.configService.get('database.key', { infer: true }) ??
-                undefined,
-              cert:
-                this.configService.get('database.cert', { infer: true }) ??
-                undefined,
+              rejectUnauthorized: config.DATABASE_REJECT_UNAUTHORIZED,
+              ca: config.DATABASE_CA,
+              key: config.DATABASE_KEY,
+              cert: config.DATABASE_CERT,
             }
           : undefined,
       },

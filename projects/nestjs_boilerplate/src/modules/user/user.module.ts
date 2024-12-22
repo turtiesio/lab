@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { UserController } from './user.controller';
 import { UserCreateUseCase } from './usecases/user-create.usecase';
 import { UserRepository } from './infrastructure/repository/user.repo';
-import { IUserRepository } from './infrastructure/repository/user.repo.interface';
 import { UserRepositoryMapper } from './infrastructure/repository/user.repo.mapper';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserSchema } from './infrastructure/repository/user.repo.schema';
