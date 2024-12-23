@@ -4,7 +4,7 @@ import {
   UserCreateRequestDto,
   UserCreateResponseDto,
 } from './user-create.dto';
-import { IUserRepository } from '../infrastructure/repository/user.repo.interface';
+import { IUserRepository } from '../infrastructure/repository/user.repo';
 
 @Injectable()
 export class UserCreateUseCase {

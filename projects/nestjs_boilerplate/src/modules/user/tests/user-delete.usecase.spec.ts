@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UserDeleteUseCase } from '../usecases/user-delete.usecase';
-import { IUserRepository } from '../infrastructure/repository/user.repo.interface';
+import { IUserRepository } from '../infrastructure/repository/user.repo';
 import { UserEntity } from '../user.entity';
 import { UserDeleteRequestDto } from '../usecases/user-delete.dto';
 

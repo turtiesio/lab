@@ -4,7 +4,7 @@ import {
   UserDeleteRequestDto,
   UserDeleteResponseDto,
 } from './user-delete.dto';
-import { IUserRepository } from '../infrastructure/repository/user.repo.interface';
+import { IUserRepository } from '../infrastructure/repository/user.repo';
 
 @Injectable()
 export class UserDeleteUseCase {

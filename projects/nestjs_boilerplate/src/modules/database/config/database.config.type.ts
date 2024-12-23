@@ -8,22 +8,6 @@ import {
 } from 'class-validator';
 import { Transform } from 'class-transformer';
 
-function transformValue(
-  value: string | undefined,
-  type: 'number' | 'boolean',
-): number | boolean | undefined {
-  if (value === undefined) {
-    return undefined;
-  }
-  if (type === 'number') {
-    return Number(value);
-  }
-  if (type === 'boolean') {
-    return value === 'true';
-  }
-  return undefined;
-}
-
 export class DatabaseConfig {
   @IsString()
   @IsOptional()
@@ -39,7 +23,7 @@ export class DatabaseConfig {
 
   @IsInt()
   @Min(1)
-  @Transform(({ value }) => transformValue(value, 'number'))
+  @Transform(({ value }) => parseInt(value, 10))
   DATABASE_PORT: number;
 
   @IsString()
@@ -56,22 +40,22 @@ export class DatabaseConfig {
 
   @IsBoolean()
   @IsOptional()
-  @Transform(({ value }) => transformValue(value, 'boolean'))
+  @Transform(({ value }) => value === 'true')
   DATABASE_SYNCHRONIZE?: boolean;
 
   @IsInt()
   @IsOptional()
-  @Transform(({ value }) => transformValue(value, 'number'))
+  @Transform(({ value }) => parseInt(value, 10))
   DATABASE_MAX_CONNECTIONS?: number;
 
   @IsBoolean()
   @IsOptional()
-  @Transform(({ value }) => transformValue(value, 'boolean'))
+  @Transform(({ value }) => value === 'true')
   DATABASE_SSL_ENABLED?: boolean;
 
   @IsBoolean()
   @IsOptional()
-  @Transform(({ value }) => transformValue(value, 'boolean'))
+  @Transform(({ value }) => value === 'true')
   DATABASE_REJECT_UNAUTHORIZED?: boolean;
 
   @IsString()

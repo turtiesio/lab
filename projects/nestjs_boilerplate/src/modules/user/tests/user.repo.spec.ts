@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UserRepository } from '../infrastructure/repository/user.repo';
-import { IUserRepository } from '../infrastructure/repository/user.repo.interface';
+import { IUserRepository } from '../infrastructure/repository/user.repo';
 import { UserEntity } from '../user.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { UserSchema } from '../infrastructure/repository/user.repo.schema';

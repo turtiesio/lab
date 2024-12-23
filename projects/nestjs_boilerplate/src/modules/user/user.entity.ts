@@ -3,6 +3,8 @@ import { IsULID } from '../../utils/is-ulid';
 import { ulid } from 'ulid';
 import { Mutable } from '../../utils/mutable';
 import { UserWorkspaceEntity } from '../user-workspace/user-workspace.entity';
+// import { USER_MODULE } from 'src/modules/user/user.constants';
+import { USER_MODULE } from '@app/modules/user/user.constants';
 
 interface User {
   readonly id: string;
@@ -24,8 +26,8 @@ export class UserEntity implements User {
   @IsEmail()
   readonly email: string;
 
-  @MinLength(2)
-  @MaxLength(50)
+  @MinLength(USER_MODULE.MIN_NAME_LENGTH)
+  @MaxLength(USER_MODULE.MAX_NAME_LENGTH)
   readonly name: string;
 
   @IsDate()

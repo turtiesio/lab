@@ -1,10 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import { IUserRepository } from './user.repo.interface';
 import { UserEntity } from '../../user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserSchema } from './user.repo.schema';
 import { Repository } from 'typeorm';
 import { UserRepositoryMapper } from './user.repo.mapper';
+
+export interface IUserRepository {
+  save(user: UserEntity): Promise<UserEntity>;
+  findById(id: string): Promise<UserEntity | null>;
+}
 
 @Injectable()
 export class UserRepository implements IUserRepository {
@@ -22,9 +26,11 @@ export class UserRepository implements IUserRepository {
 
   async findById(id: string): Promise<UserEntity | null> {
     const schema = await this.userModel.findOne({ where: { id } });
+    
     if (!schema) {
       return null;
     }
+
     return this.mapper.toDomain(schema);
   }
 }
