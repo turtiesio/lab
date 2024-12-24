@@ -6,7 +6,7 @@ import {
   UpdateDateColumn,
   OneToMany,
 } from 'typeorm';
-import { UserWorkspaceSchema } from '../../../user-workspace/infrastructure/repository/user-workspace.schema';
+import { UserWorkspaceSchema } from '@back/modules/user-workspace/infrastructure/repository/user-workspace.schema';
 
 @Entity('users')
 export class UserSchema {

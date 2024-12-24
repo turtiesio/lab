@@ -1,6 +1,4 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { FileModule } from './modules/file/file.module';
 import { UserModule } from './modules/user/user.module';
@@ -11,10 +9,9 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 @Module({
   imports: [
     ConfigModule.forRoot({
-      isGlobal: true, // Make ConfigModule available globally
-      load: [], // Load configuration files
-      validate, // Validate environment variables
-      envFilePath: ['.env'], // Specify the .env file path
+      isGlobal: true,
+      load: [],
+      envFilePath: ['.env.local'],
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
@@ -27,9 +24,6 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
     UserModule,
     WorkspaceModule,
     UserWorkspaceModule,
-    DatabaseModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
 })
 export class AppModule {}

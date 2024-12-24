@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { UserEntity } from '../../user.entity';
+import { User } from '../../user.entity';
 import { UserSchema } from './user.repo.schema';
 import { Mutable } from '../../../../utils/mutable';
 
 @Injectable()
 export class UserRepositoryMapper {
-  toDomain(schema: UserSchema): UserEntity {
-    const user = new UserEntity() as Mutable<UserEntity>;
+  toDomain(schema: UserSchema): User {
+    const user = new User() as Mutable<User>;
     user.id = schema.id;
     user.email = schema.email;
     user.name = schema.name;
@@ -16,7 +16,7 @@ export class UserRepositoryMapper {
     return user;
   }
 
-  toSchema(domain: UserEntity): UserSchema {
+  toSchema(domain: User): UserSchema {
     const schema = new UserSchema();
     schema.id = domain.id;
     schema.email = domain.email;

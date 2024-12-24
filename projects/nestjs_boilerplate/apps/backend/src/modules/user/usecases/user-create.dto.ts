@@ -1,6 +1,6 @@
 import { IsEmail, IsString } from 'class-validator';
 import { IsULID } from '../../../utils/is-ulid';
-import { UserEntity } from '../user.entity';
+import { User } from '../user.entity';
 
 export class UserCreateRequestDto {
   @IsEmail()
@@ -28,11 +28,11 @@ export class UserCreateResponseDto {
 }
 
 export class UserCreateDtoMapper {
-  static toEntity(dto: UserCreateRequestDto): UserEntity {
-    return UserEntity.create({ email: dto.email, name: dto.name });
+  static toEntity(dto: UserCreateRequestDto): User {
+    return User.create({ email: dto.email, name: dto.name });
   }
 
-  static fromEntity(entity: UserEntity): UserCreateResponseDto {
+  static fromEntity(entity: User): UserCreateResponseDto {
     const response = new UserCreateResponseDto();
     response.id = entity.id;
     response.email = entity.email;

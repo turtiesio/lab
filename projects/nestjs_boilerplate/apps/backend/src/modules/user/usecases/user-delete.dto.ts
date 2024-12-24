@@ -1,4 +1,4 @@
-import { UserEntity } from '../user.entity';
+import { User } from '../user.entity';
 import { IsULID } from '../../../utils/is-ulid';
 import { IsNullable } from '../../../utils/is-nullable';
 import { IsEmail, IsISO8601, IsString } from 'class-validator';
@@ -41,7 +41,7 @@ export class UserDeleteResponseDto {
 }
 
 export class UserDeleteDtoMapper {
-  static fromEntity(entity: UserEntity): UserDeleteResponseDto {
+  static fromEntity(entity: User): UserDeleteResponseDto {
     const response = new UserDeleteResponseDto();
     response.id = entity.id;
     response.email = entity.email;

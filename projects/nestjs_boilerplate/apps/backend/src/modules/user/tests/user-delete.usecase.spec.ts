@@ -1,19 +1,19 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UserDeleteUseCase } from '../usecases/user-delete.usecase';
-import { IUserRepository } from '../infrastructure/repository/user.repo';
-import { UserEntity } from '../user.entity';
+import { UserRepository } from '../infrastructure/repository/user.repo';
+import { User } from '../user.entity';
 import { UserDeleteRequestDto } from '../usecases/user-delete.dto';
 
 describe('UserDeleteUseCase', () => {
   let userDeleteUseCase: UserDeleteUseCase;
-  let userRepository: IUserRepository;
+  let userRepository: UserRepository;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         UserDeleteUseCase,
         {
-          provide: 'IUserRepository',
+          provide: UserRepository,
           useValue: {
             findById: jest.fn(),
             save: jest.fn(),
@@ -23,7 +23,7 @@ describe('UserDeleteUseCase', () => {
     }).compile();
 
     userDeleteUseCase = module.get<UserDeleteUseCase>(UserDeleteUseCase);
-    userRepository = module.get<IUserRepository>('IUserRepository');
+    userRepository = module.get<UserRepository>(UserRepository);
   });
 
   it('should be defined', () => {
@@ -34,7 +34,7 @@ describe('UserDeleteUseCase', () => {
     const deleteUserDto: UserDeleteRequestDto = {
       id: 'some-ulid',
     };
-    const userEntity = UserEntity.create({
+    const userEntity = User.create({
       email: 'test@example.com',
       name: 'Test User',
     });
@@ -42,7 +42,7 @@ describe('UserDeleteUseCase', () => {
     (userRepository.save as jest.Mock).mockResolvedValue(userEntity);
     await userDeleteUseCase.execute(deleteUserDto);
     expect(userRepository.findById).toHaveBeenCalledWith(deleteUserDto.id);
-    expect(userRepository.save).toHaveBeenCalledWith(expect.any(UserEntity));
+    expect(userRepository.save).toHaveBeenCalledWith(expect.any(User));
   });
 
   it('should throw an error if user is not found', async () => {

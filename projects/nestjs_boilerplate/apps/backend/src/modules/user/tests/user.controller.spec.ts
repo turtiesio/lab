@@ -6,7 +6,7 @@ import {
   UserCreateResponseDto,
   UserCreateDtoMapper,
 } from '../usecases/user-create.dto';
-import { UserEntity } from '../user.entity';
+import { User } from '../user.entity';
 
 describe('UserController', () => {
   let userController: UserController;
@@ -48,7 +48,7 @@ describe('UserController', () => {
         email: 'test@example.com',
         name: 'Test User',
       };
-      const mockUserEntity = UserEntity.create({
+      const mockUserEntity = User.create({
         email: 'test@example.com',
         name: 'Test User',
       });

@@ -1,36 +1,39 @@
 # Core Principles
 
-1. Entity: is pure entity. Not typeorm entity
-2. Schema: is a typeorm entity
-3. Tests: under modules `tests` directory
+SOLID, DRY, KISS, YAGNI!!!!!!!!!!!!!!!!!!
 
-Interface-Driven!!!!!!!!!!!!!!!!!!(VERY IMPORTANT)
-All modules will expose an interface and have at least 1 implementation (can be a mock at start). With DTO, you can have multiple implementations.
+INTERFACE DRIVEN DEVELOPMENT!!!!!!
+All class MUST define interface at start. for easy mocking and readability. define in same file.
 
-Test-Driven Development!!!(ALSO IMPORTANT)
-Every implementation requires a unit test, ensuring reliability from the beginning.
+```ts
+export interface SomeRepository { ... }
+export class SomeRepository implements SomeRepository { ...}
+```
 
-Feature-Driven
-Organize code by features (e.g., auth, workspaces, uploads) rather than layers (controllers, services, repositories) at the highest level. This promotes better understanding, maintainability, and easier collaboration within a small team.
+TEST DRIVEN DEVELOPMENT: TEST is MUST!!
 
-Decoupling
+STRUCTURED BY FEATURE(MODULE)
+Organize code by features (e.g., auth, workspaces, uploads) rather than layers (controllers, services, repositories). This promotes better understanding, maintainability, and easier collaboration within a small team.
+
+DECOUPLING
 Keep components loosely coupled through interfaces and dependency injection to enable changes and reuse.
 
 Convention over Configuration
 Adopt conventions for directory and file naming to reduce overhead.
 
-## Tools
+RULE
+
+1. Entity: is pure entity. Not typeorm entity
+2. Schema: is a typeorm entity
+3. Tests: under modules `tests` directory
+
+## Tools and styple
 
 - NestJS
 - yarn
+- typescript: strict
 
-## Coding Style
-
-- SOLID, DRY, KISS, YAGNI
-- Typescript: NO `var`, NO `any`
-- File naming: kebab-case
-
-## How to
+## FILE NAMING
 
 Let's say you want to add a "notifications" feature. With this structure, you would:
 

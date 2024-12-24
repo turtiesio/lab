@@ -1,12 +1,12 @@
-import { UserEntity } from '../user.entity';
+import { User } from '../user.entity';
 
-describe('UserEntity', () => {
+describe('User', () => {
   it('should create a new user entity', () => {
-    const user = UserEntity.create({
+    const user = User.create({
       email: 'test@example.com',
       name: 'Test User',
     });
-    expect(user).toBeInstanceOf(UserEntity);
+    expect(user).toBeInstanceOf(User);
     expect(user.email).toBe('test@example.com');
     expect(user.name).toBe('Test User');
     expect(user.createdAt).toBeDefined();
@@ -15,7 +15,7 @@ describe('UserEntity', () => {
   });
 
   it("should change the user's name", () => {
-    const user = UserEntity.create({
+    const user = User.create({
       email: 'test@example.com',
       name: 'Test User',
     });
@@ -25,7 +25,7 @@ describe('UserEntity', () => {
   });
 
   it('should mark the user as deleted', () => {
-    const user = UserEntity.create({
+    const user = User.create({
       email: 'test@example.com',
       name: 'Test User',
     });

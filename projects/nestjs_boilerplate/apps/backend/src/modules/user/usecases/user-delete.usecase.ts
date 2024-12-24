@@ -4,14 +4,11 @@ import {
   UserDeleteRequestDto,
   UserDeleteResponseDto,
 } from './user-delete.dto';
-import { IUserRepository } from '../infrastructure/repository/user.repo';
+import { UserRepository } from '../infrastructure/repository/user.repo';
 
 @Injectable()
 export class UserDeleteUseCase {
-  constructor(
-    @Inject('IUserRepository')
-    private readonly userRepository: IUserRepository,
-  ) {}
+  constructor(@Inject() private readonly userRepository: UserRepository) {}
 
   async execute(dto: UserDeleteRequestDto): Promise<UserDeleteResponseDto> {
     const user = await this.userRepository.findById(dto.id);

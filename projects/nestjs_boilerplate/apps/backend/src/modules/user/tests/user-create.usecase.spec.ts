@@ -1,19 +1,19 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UserCreateUseCase } from '../usecases/user-create.usecase';
-import { IUserRepository } from '../infrastructure/repository/user.repo';
-import { UserEntity } from '../user.entity';
+import { UserRepository } from '../infrastructure/repository/user.repo';
+import { User } from '../user.entity';
 import { UserCreateRequestDto } from '../usecases/user-create.dto';
 
 describe('UserCreateUseCase', () => {
   let userCreateUseCase: UserCreateUseCase;
-  let userRepository: IUserRepository;
+  let userRepository: UserRepository;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         UserCreateUseCase,
         {
-          provide: 'IUserRepository',
+          provide: UserRepository,
           useValue: {
             save: jest.fn(),
           },
@@ -22,7 +22,7 @@ describe('UserCreateUseCase', () => {
     }).compile();
 
     userCreateUseCase = module.get<UserCreateUseCase>(UserCreateUseCase);
-    userRepository = module.get<IUserRepository>('IUserRepository');
+    userRepository = module.get<UserRepository>(UserRepository);
   });
 
   it('should be defined', () => {
@@ -34,10 +34,10 @@ describe('UserCreateUseCase', () => {
       email: 'test@example.com',
       name: 'Test User',
     };
-    const userEntity = UserEntity.create(createUserDto);
+    const userEntity = User.create(createUserDto);
     (userRepository.save as jest.Mock).mockResolvedValue(userEntity);
     const result = await userCreateUseCase.execute(createUserDto);
-    expect(userRepository.save).toHaveBeenCalledWith(expect.any(UserEntity));
+    expect(userRepository.save).toHaveBeenCalledWith(expect.any(User));
     expect(result).toEqual({
       id: expect.any(String),
       email: createUserDto.email,

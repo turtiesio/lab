@@ -3,7 +3,7 @@ import {
   UserCreateResponseDto,
   UserCreateDtoMapper,
 } from '../usecases/user-create.dto';
-import { UserEntity } from '../user.entity';
+import { User } from '../user.entity';
 
 describe('UserCreateDto', () => {
   it('should be defined', () => {
@@ -51,7 +51,7 @@ describe('UserCreateDto', () => {
   });
 
   it('should create a valid UserCreateResponseDto', () => {
-    const entity = UserEntity.create({
+    const entity = User.create({
       email: 'john.doe@example.com',
       name: 'John Doe',
     });
@@ -63,7 +63,7 @@ describe('UserCreateDto', () => {
     expect(responseDto.createdAt).toBeDefined();
   });
 
-  it('should map UserCreateRequestDto to UserEntity correctly', () => {
+  it('should map UserCreateRequestDto to User correctly', () => {
     const requestDto = new UserCreateRequestDto();
     requestDto.email = 'john.doe@example.com';
     requestDto.name = 'John Doe';

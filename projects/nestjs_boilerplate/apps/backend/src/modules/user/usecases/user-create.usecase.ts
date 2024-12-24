@@ -4,14 +4,11 @@ import {
   UserCreateRequestDto,
   UserCreateResponseDto,
 } from './user-create.dto';
-import { IUserRepository } from '../infrastructure/repository/user.repo';
+import { UserRepository } from '@back/modules/user/infrastructure/repository/user.repo';
 
 @Injectable()
 export class UserCreateUseCase {
-  constructor(
-    @Inject('IUserRepository')
-    private readonly userRepository: IUserRepository,
-  ) {}
+  constructor(@Inject() private readonly userRepository: UserRepository) {}
 
   async execute(dto: UserCreateRequestDto): Promise<UserCreateResponseDto> {
     return UserCreateDtoMapper.fromEntity(

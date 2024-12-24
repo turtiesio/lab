@@ -1,14 +1,13 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UserRepository } from '../infrastructure/repository/user.repo';
-import { IUserRepository } from '../infrastructure/repository/user.repo';
-import { UserEntity } from '../user.entity';
+import { User } from '../user.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { UserSchema } from '../infrastructure/repository/user.repo.schema';
 import { Repository } from 'typeorm';
 import { UserRepositoryMapper } from '../infrastructure/repository/user.repo.mapper';
 
 describe('UserRepository', () => {
-  let userRepository: IUserRepository;
+  let userRepository: UserRepository;
   let typeOrmRepository: Repository<UserSchema>;
 
   beforeEach(async () => {
@@ -26,7 +25,7 @@ describe('UserRepository', () => {
       ],
     }).compile();
 
-    userRepository = module.get<IUserRepository>(UserRepository);
+    userRepository = module.get<UserRepository>(UserRepository);
     typeOrmRepository = module.get<Repository<UserSchema>>(
       getRepositoryToken(UserSchema),
     );
@@ -38,7 +37,7 @@ describe('UserRepository', () => {
 
   describe('save', () => {
     it('should save a user entity', async () => {
-      const user = UserEntity.create({
+      const user = User.create({
         email: 'test@example.com',
         name: 'Test User',
       });
@@ -60,7 +59,7 @@ describe('UserRepository', () => {
           deletedAt: null,
         }),
       );
-      expect(savedUser).toBeInstanceOf(UserEntity);
+      expect(savedUser).toBeInstanceOf(User);
       expect(savedUser.id).toBe(user.id);
       expect(savedUser.email).toBe(user.email);
       expect(savedUser.name).toBe(user.name);
@@ -69,7 +68,7 @@ describe('UserRepository', () => {
 
   describe('findById', () => {
     it('should find a user by id', async () => {
-      const user = UserEntity.create({
+      const user = User.create({
         email: 'test@example.com',
         name: 'Test User',
       });
@@ -84,7 +83,7 @@ describe('UserRepository', () => {
       expect(typeOrmRepository.findOne).toHaveBeenCalledWith({
         where: { id: user.id },
       });
-      expect(foundUser).toBeInstanceOf(UserEntity);
+      expect(foundUser).toBeInstanceOf(User);
       expect(foundUser?.id).toBe(user.id);
       expect(foundUser?.email).toBe(user.email);
       expect(foundUser?.name).toBe(user.name);

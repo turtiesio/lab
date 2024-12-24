@@ -3,7 +3,7 @@ import {
   UserDeleteResponseDto,
   UserDeleteDtoMapper,
 } from '../usecases/user-delete.dto';
-import { UserEntity } from '../user.entity';
+import { User } from '../user.entity';
 
 describe('UserDeleteDto', () => {
   it('should be defined', () => {
@@ -38,8 +38,8 @@ describe('UserDeleteDto', () => {
     }).toThrow('Invalid ULID format');
   });
 
-  it('should create a valid UserDeleteResponseDto from UserEntity', () => {
-    const entity = UserEntity.create({
+  it('should create a valid UserDeleteResponseDto from User', () => {
+    const entity = User.create({
       email: 'test@example.com',
       name: 'Test User',
     });
@@ -60,8 +60,8 @@ describe('UserDeleteDto', () => {
     );
   });
 
-  it('should create a valid UserDeleteResponseDto from UserEntity with null deletedAt', () => {
-    const entity = UserEntity.create({
+  it('should create a valid UserDeleteResponseDto from User with null deletedAt', () => {
+    const entity = User.create({
       email: 'test@example.com',
       name: 'Test User',
     });
