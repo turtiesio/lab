@@ -8,7 +8,7 @@ import { decodeTime } from 'ulid';
 
 @ValidatorConstraint({ name: 'isUlid', async: false })
 export class IsUlidConstraint implements ValidatorConstraintInterface {
-  validate(text: string, args: ValidationArguments) {
+  validate(text: string) {
     if (typeof text !== 'string') return false;
 
     // ULID is always 26 characters long
@@ -33,7 +33,7 @@ export class IsUlidConstraint implements ValidatorConstraintInterface {
 }
 
 export function IsULID() {
-  return function (object: Object, propertyName: string) {
+  return function (object: object, propertyName: string) {
     registerDecorator({
       name: 'isUlid',
       target: object.constructor,

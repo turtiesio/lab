@@ -1,4 +1,4 @@
-import { IsString, MinLength, MaxLength, IsDate } from 'class-validator';
+import { MinLength, MaxLength, IsDate } from 'class-validator';
 import { IsULID } from '../../utils/is-ulid';
 import { ulid } from 'ulid';
 import { Mutable } from '../../utils/mutable';

@@ -6,8 +6,8 @@ INTERFACE DRIVEN DEVELOPMENT!!!!!!
 All class MUST define interface at start. for easy mocking and readability. define in same file.
 
 ```ts
-export interface SomeRepository { ... }
-export class SomeRepository implements SomeRepository { ...}
+interface IUser { ... }
+export class User implements IUser { ... }
 ```
 
 TEST DRIVEN DEVELOPMENT: TEST is MUST!!

@@ -5,13 +5,13 @@ import { UserSchema } from './user.repo.schema';
 import { Repository } from 'typeorm';
 import { UserRepositoryMapper } from './user.repo.mapper';
 
-export interface UserRepository {
+interface IUserRepository {
   save(user: User): Promise<User>;
   findById(id: string): Promise<User | null>;
 }
 
 @Injectable()
-export class UserRepository implements UserRepository {
+export class UserRepository implements IUserRepository {
   constructor(
     @InjectRepository(UserSchema)
     private readonly userModel: Repository<UserSchema>,
