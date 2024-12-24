@@ -1,11 +1,17 @@
 import { NestFactory } from '@nestjs/core';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
-import { HttpExceptionFilter } from './utils/http-exception.filter';
 import { ConfigService } from '@nestjs/config';
+import { MyLogger } from './logger/logger.service';
+import { AppConfig } from '@back/app.config';
+import { HttpExceptionFilter } from '@back/utils/http-exception.filter';
 import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    bufferLogs: true,
+  });
+
   app.useGlobalFilters(new HttpExceptionFilter());
 
   // Enable validation globally
@@ -16,9 +22,23 @@ async function bootstrap() {
       forbidNonWhitelisted: true, // Throw an error if non-whitelisted properties are present
     }),
   );
-
   const configService = app.get(ConfigService);
-  const port = configService.get<number>('app.port') ?? 3000; // Get port from configuration
-  await app.listen(port);
+  const configApp = configService.get<AppConfig>('app');
+
+  // Swagger Setup (Conditional)
+  if (configApp?.nodeEnv === 'development') {
+    const config = new DocumentBuilder()
+      .setTitle('User Management API')
+      .setDescription('API documentation for the User Management service')
+      .setVersion('1.0')
+      .addTag('users')
+      .build();
+    const document = SwaggerModule.createDocument(app, config);
+    SwaggerModule.setup('api', app, document);
+  }
+
+  app.useLogger(await app.resolve(MyLogger));
+
+  await app.listen(configApp?.port ?? 3000);
 }
 bootstrap();

@@ -4,7 +4,15 @@ import {
   UserCreateRequestDto,
 } from './usecases/user-create.dto';
 import { UserCreateUseCase } from './usecases/user-create.usecase';
-import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiBody,
+  ApiCreatedResponse,
+  ApiBadRequestResponse,
+  ApiConflictResponse,
+  ApiResponse,
+} from '@nestjs/swagger';
 
 @ApiTags('users')
 @Controller('users')
@@ -13,11 +21,13 @@ export class UserController {
 
   @Post()
   @ApiOperation({ summary: 'Create a new user' })
-  @ApiResponse({
-    status: 201,
+  @ApiBody({ type: UserCreateRequestDto })
+  @ApiCreatedResponse({
     description: 'The user has been successfully created.',
+    type: UserCreateResponseDto,
   })
-  @ApiResponse({ status: 400, description: 'Bad request.' })
+  @ApiBadRequestResponse({ description: 'Bad request.' })
+  @ApiConflictResponse({ description: 'Conflict. Email already exists.' })
   @ApiResponse({ status: 500, description: 'Internal server error.' })
   async createUser(
     @Body() dto: UserCreateRequestDto,

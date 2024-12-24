@@ -1,8 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { UserModule } from './modules/user/user.module';
 import appConfig from './app.config';
 import { AppDataSource } from './modules/database/dataSource';
@@ -27,7 +25,5 @@ import databaseConfig from './modules/database/database.config';
     UserModule,
     LoggerModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
 })
 export class AppModule {}
