@@ -5,13 +5,15 @@ import { UserModule } from './modules/user/user.module';
 import { WorkspaceModule } from './modules/workspace/workspace.module';
 import { UserWorkspaceModule } from './modules/user-workspace/user-workspace.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import databaseConfig from '@back/modules/database/database.config';
+import appConfig from '@back/app.config';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [],
-      envFilePath: ['.env.local'],
+      load: [appConfig, databaseConfig],
+      envFilePath: ['.env'],
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
