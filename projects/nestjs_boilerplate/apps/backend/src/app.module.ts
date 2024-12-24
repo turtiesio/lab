@@ -2,19 +2,12 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { DatabaseModule } from './modules/database/database.module';
 import { UserModule } from './modules/user/user.module';
-import configuration from './config/app.config';
+import { validate } from 'apps/backend/src/app.config';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
-      isGlobal: true,
-      load: [configuration],
-      validationOptions: {
-        skipMissingProperties: false,
-        whitelist: true,
-        forbidNonWhitelisted: true,
-      },
-      envFilePath: '.env.local',
+      validate,
     }),
     DatabaseModule,
     UserModule,
