@@ -1,19 +1,19 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UserDeleteUseCase } from '../usecases/user-delete.usecase';
-import { UserRepository } from '../infrastructure/repository/user.repo';
+import { UserRepositoryImpl } from '../infrastructure/repository/user.repo';
 import { User } from '../user.entity';
 import { UserDeleteRequestDto } from '../usecases/user-delete.dto';
 
 describe('UserDeleteUseCase', () => {
   let userDeleteUseCase: UserDeleteUseCase;
-  let userRepository: UserRepository;
+  let userRepository: UserRepositoryImpl;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         UserDeleteUseCase,
         {
-          provide: UserRepository,
+          provide: UserRepositoryImpl,
           useValue: {
             findById: jest.fn(),
             save: jest.fn(),
@@ -23,7 +23,7 @@ describe('UserDeleteUseCase', () => {
     }).compile();
 
     userDeleteUseCase = module.get<UserDeleteUseCase>(UserDeleteUseCase);
-    userRepository = module.get<UserRepository>(UserRepository);
+    userRepository = module.get<UserRepositoryImpl>(UserRepositoryImpl);
   });
 
   it('should be defined', () => {

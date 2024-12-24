@@ -6,7 +6,7 @@ import { Mutable } from '../../utils/mutable';
 import { UserWorkspaceEntity } from '@back/modules/user-workspace/user-workspace.entity';
 import { USER_MODULE } from '@back/modules/user/user.constants';
 
-interface IUser {
+interface UserModel {
   readonly id: string;
   readonly email: string;
   readonly name: string;
@@ -19,7 +19,7 @@ interface IUser {
   setDeleted(): User;
 }
 
-export class User implements IUser {
+export class User implements UserModel {
   @IsULID()
   readonly id: string;
 

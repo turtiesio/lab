@@ -4,9 +4,7 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
-  OneToMany,
 } from 'typeorm';
-import { UserWorkspaceSchema } from '@back/modules/user-workspace/infrastructure/repository/user-workspace.schema';
 
 @Entity('users')
 export class UserSchema {
@@ -27,7 +25,4 @@ export class UserSchema {
 
   @Column({ nullable: true })
   deletedAt: Date | null;
-
-  @OneToMany(() => UserWorkspaceSchema, (userWorkspace) => userWorkspace.user)
-  workspaces: UserWorkspaceSchema[];
 }

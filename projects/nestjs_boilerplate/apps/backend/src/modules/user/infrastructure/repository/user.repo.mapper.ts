@@ -1,11 +1,24 @@
+import { UserSchema } from '@back/modules/user/infrastructure/repository/user.repo.schema';
+import { User } from '@back/modules/user/user.entity';
+import { Mutable } from '@back/utils/mutable';
 import { Injectable } from '@nestjs/common';
-import { User } from '../../user.entity';
-import { UserSchema } from './user.repo.schema';
-import { Mutable } from '../../../../utils/mutable';
+
+// return null
+export abstract class UserRepositoryMapper {
+  abstract toDomain(schema: UserSchema): User;
+  abstract toDomain(schema: UserSchema | null): User | null;
+  abstract toSchema(domain: User): UserSchema;
+}
 
 @Injectable()
-export class UserRepositoryMapper {
-  toDomain(schema: UserSchema): User {
+export class UserRepositoryMapperImpl implements UserRepositoryMapper {
+  toDomain(schema: UserSchema): User;
+  toDomain(schema: UserSchema | null): User | null;
+  toDomain(schema: UserSchema | null): User | null {
+    if (!schema) {
+      return null;
+    }
+
     const user = new User() as Mutable<User>;
     user.id = schema.id;
     user.email = schema.email;

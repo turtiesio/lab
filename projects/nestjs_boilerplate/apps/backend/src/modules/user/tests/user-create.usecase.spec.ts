@@ -1,19 +1,19 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UserCreateUseCase } from '../usecases/user-create.usecase';
-import { UserRepository } from '../infrastructure/repository/user.repo';
+import { UserRepositoryImpl } from '../infrastructure/repository/user.repo';
 import { User } from '../user.entity';
 import { UserCreateRequestDto } from '../usecases/user-create.dto';
 
 describe('UserCreateUseCase', () => {
   let userCreateUseCase: UserCreateUseCase;
-  let userRepository: UserRepository;
+  let userRepository: UserRepositoryImpl;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         UserCreateUseCase,
         {
-          provide: UserRepository,
+          provide: UserRepositoryImpl,
           useValue: {
             save: jest.fn(),
           },
@@ -22,7 +22,7 @@ describe('UserCreateUseCase', () => {
     }).compile();
 
     userCreateUseCase = module.get<UserCreateUseCase>(UserCreateUseCase);
-    userRepository = module.get<UserRepository>(UserRepository);
+    userRepository = module.get<UserRepositoryImpl>(UserRepositoryImpl);
   });
 
   it('should be defined', () => {

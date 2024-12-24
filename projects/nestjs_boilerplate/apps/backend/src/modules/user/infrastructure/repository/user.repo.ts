@@ -3,19 +3,19 @@ import { User } from '../../user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserSchema } from './user.repo.schema';
 import { Repository } from 'typeorm';
-import { UserRepositoryMapper } from './user.repo.mapper';
+import { UserRepositoryMapperImpl } from './user.repo.mapper';
 
-interface IUserRepository {
-  save(user: User): Promise<User>;
-  findById(id: string): Promise<User | null>;
+export abstract class UserRepository {
+  abstract save(user: User): Promise<User>;
+  abstract findById(id: string): Promise<User | null>;
 }
 
 @Injectable()
-export class UserRepository implements IUserRepository {
+export class UserRepositoryImpl implements UserRepository {
   constructor(
     @InjectRepository(UserSchema)
     private readonly userModel: Repository<UserSchema>,
-    private readonly mapper: UserRepositoryMapper,
+    private readonly mapper: UserRepositoryMapperImpl,
   ) {}
 
   async save(user: User): Promise<User> {
@@ -25,12 +25,8 @@ export class UserRepository implements IUserRepository {
   }
 
   async findById(id: string): Promise<User | null> {
-    const schema = await this.userModel.findOne({ where: { id } });
-
-    if (!schema) {
-      return null;
-    }
-
-    return this.mapper.toDomain(schema);
+    return this.mapper.toDomain(
+      await this.userModel.findOne({ where: { id } }),
+    );
   }
 }

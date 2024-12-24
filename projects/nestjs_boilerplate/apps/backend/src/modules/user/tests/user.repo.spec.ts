@@ -1,20 +1,20 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { UserRepository } from '../infrastructure/repository/user.repo';
+import { UserRepositoryImpl } from '../infrastructure/repository/user.repo';
 import { User } from '../user.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { UserSchema } from '../infrastructure/repository/user.repo.schema';
 import { Repository } from 'typeorm';
-import { UserRepositoryMapper } from '../infrastructure/repository/user.repo.mapper';
+import { UserRepositoryMapperImpl } from '../infrastructure/repository/user.repo.mapper';
 
 describe('UserRepository', () => {
-  let userRepository: UserRepository;
+  let userRepository: UserRepositoryImpl;
   let typeOrmRepository: Repository<UserSchema>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        UserRepository,
-        UserRepositoryMapper,
+        UserRepositoryImpl,
+        UserRepositoryMapperImpl,
         {
           provide: getRepositoryToken(UserSchema),
           useValue: {
@@ -25,7 +25,7 @@ describe('UserRepository', () => {
       ],
     }).compile();
 
-    userRepository = module.get<UserRepository>(UserRepository);
+    userRepository = module.get<UserRepositoryImpl>(UserRepositoryImpl);
     typeOrmRepository = module.get<Repository<UserSchema>>(
       getRepositoryToken(UserSchema),
     );
