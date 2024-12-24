@@ -1,9 +1,13 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { UserModule } from './modules/user/user.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import databaseConfig from '@back/modules/database/database.config';
-import appConfig from '@back/app.config';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
+import { UserModule } from './modules/user/user.module';
+import appConfig from './app.config';
+import { AppDataSource } from './modules/database/dataSource';
+import { LoggerModule } from './logger/logger.module';
+import databaseConfig from './modules/database/database.config';
 
 @Module({
   imports: [
@@ -16,10 +20,14 @@ import appConfig from '@back/app.config';
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
         ...configService.get('database'),
+        entities: AppDataSource.options.entities,
       }),
       inject: [ConfigService],
     }),
     UserModule,
+    LoggerModule,
   ],
+  controllers: [AppController],
+  providers: [AppService],
 })
 export class AppModule {}
