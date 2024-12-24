@@ -9,14 +9,6 @@ import { UserSchema } from './infrastructure/repository/user.repo.schema';
 @Module({
   imports: [TypeOrmModule.forFeature([UserSchema])],
   controllers: [UserController],
-  providers: [
-    UserCreateUseCase,
-    UserRepository,
-    {
-      provide: 'IUserRepository',
-      useClass: UserRepository,
-    },
-    UserRepositoryMapper,
-  ],
+  providers: [UserCreateUseCase, UserRepository, UserRepositoryMapper],
 })
 export class UserModule {}

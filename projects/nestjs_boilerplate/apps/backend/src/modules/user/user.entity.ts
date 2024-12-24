@@ -1,12 +1,12 @@
-import { IsEmail, MinLength, MaxLength, IsDate } from 'class-validator';
-import { IsULID } from '../../utils/is-ulid';
 import { ulid } from 'ulid';
-import { Mutable } from '../../utils/mutable';
-import { UserWorkspaceEntity } from '../user-workspace/user-workspace.entity';
-// import { USER_MODULE } from 'src/modules/user/user.constants';
-import { USER_MODULE } from '@app/modules/user/user.constants';
+import { IsEmail, MinLength, MaxLength, IsDate } from 'class-validator';
 
-interface User {
+import { IsULID } from '../../utils/is-ulid';
+import { Mutable } from '../../utils/mutable';
+import { UserWorkspaceEntity } from '@back/modules/user-workspace/user-workspace.entity';
+import { USER_MODULE } from '@back/modules/user/user.constants';
+
+export interface User {
   readonly id: string;
   readonly email: string;
   readonly name: string;
@@ -19,7 +19,7 @@ interface User {
   setDeleted(): User;
 }
 
-export class UserEntity implements User {
+export class User implements User {
   @IsULID()
   readonly id: string;
 
@@ -43,24 +43,22 @@ export class UserEntity implements User {
 
   // Domain business logic
 
-  public changeName(name: string): UserEntity {
-    const user = this as Mutable<UserEntity>;
+  public changeName(name: string): User {
+    const user = this as Mutable<User>;
     user.name = name;
     user.updatedAt = new Date();
     return user;
   }
 
-  public setDeleted(): UserEntity {
-    const user = this as Mutable<UserEntity>;
+  public setDeleted(): User {
+    const user = this as Mutable<User>;
     user.deletedAt = new Date();
     user.updatedAt = new Date();
     return user;
   }
 
-  //
-
-  static create(data: Pick<UserEntity, 'email' | 'name'>): UserEntity {
-    const user = new UserEntity() as Mutable<UserEntity>;
+  static create(data: Pick<User, 'email' | 'name'>): User {
+    const user = new User() as Mutable<User>;
     user.id = ulid();
     user.email = data.email;
     user.name = data.name;
