@@ -1,7 +1,13 @@
 # Decisions
 
+- [2024.12.24 - ULID](#20241224---ulid)
 - [2024.12.24 - NestJS vs NextJS -\> Nest 사용하기로.](#20241224---nestjs-vs-nextjs---nest-사용하기로)
 - [2024.12.25 - 로깅 라이브러리: Pino](#20241225---로깅-라이브러리-pino)
+
+## 2024.12.24 - ULID
+
+1. Sortable.
+2. Compact(then uuid)
 
 ## 2024.12.24 - NestJS vs NextJS -> Nest 사용하기로.
 

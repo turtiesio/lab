@@ -23,9 +23,10 @@ Adopt conventions for directory and file naming to reduce overhead.
 
 RULE
 
-1. Entity: is pure entity. Not typeorm entity
-2. Schema: is a typeorm entity
-3. Tests: under modules `tests` directory
+1. Custom exception per module
+2. Entity: is pure entity. Not typeorm entity
+3. Schema: is a typeorm entity
+4. Tests: under modules `tests` directory
 
 ## Tools and styple
 
