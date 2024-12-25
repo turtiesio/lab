@@ -17,15 +17,16 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const response = ctx.getResponse<Response>();
 
     let status = HttpStatus.INTERNAL_SERVER_ERROR;
+    let message = 'Internal server error';
 
     if (exception instanceof HttpException) {
       status = exception.getStatus();
+      message = exception.message;
     }
-
-    const message = this.getDefaultMessage(status);
 
     this.logger.setContext(HttpExceptionFilter.name);
 
+    // Log errors
     if (status >= 500) {
       this.logger.error(
         `Status: ${status}, Message: ${
@@ -43,7 +44,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
 
     response.status(status).json({
       statusCode: status,
-      message: message,
+      message: this.getDefaultMessage(status), // No detailed message(for security reasons)
     });
   }
 
