@@ -10,7 +10,9 @@ import { Response } from 'express';
 
 @Catch()
 export class HttpExceptionFilter implements ExceptionFilter {
-  constructor(private readonly logger: MyLogger) {}
+  constructor(private readonly logger: MyLogger) {
+    this.logger.setContext(HttpExceptionFilter.name);
+  }
 
   catch(exception: unknown, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
@@ -22,29 +24,21 @@ export class HttpExceptionFilter implements ExceptionFilter {
     if (exception instanceof HttpException) {
       status = exception.getStatus();
       message = exception.message;
+    } else if (exception instanceof Error) {
+      message = exception.message;
+    } else {
+      message = 'No error message';
     }
-
-    this.logger.setContext(HttpExceptionFilter.name);
 
     // Log errors
-    if (status >= 500) {
-      this.logger.error(
-        `Status: ${status}, Message: ${
-          exception instanceof Error ? exception.message : 'No message'
-        }`,
-        exception instanceof Error ? exception.stack : '',
-      );
-    } else {
-      this.logger.log(
-        `Status: ${status}, Message: ${
-          exception instanceof Error ? exception.message : 'No message'
-        }`,
-      );
-    }
+    this.logger.write(status >= 500 ? 'error' : 'info', message, {
+      status,
+      err: exception,
+    });
 
     response.status(status).json({
       statusCode: status,
-      message: this.getDefaultMessage(status), // No detailed message(for security reasons)
+      message: this.getDefaultMessage(status), //! No detailed message(for security reasons)
     });
   }
 

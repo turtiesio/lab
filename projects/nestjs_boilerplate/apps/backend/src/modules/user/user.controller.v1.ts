@@ -15,8 +15,11 @@ import {
 } from '@nestjs/swagger';
 
 @ApiTags('users')
-@Controller('users')
-export class UserController {
+@Controller({
+  path: 'users',
+  version: '1',
+})
+export class UserControllerV1 {
   constructor(private readonly userCreateUseCase: UserCreateUseCase) {}
 
   @Post()

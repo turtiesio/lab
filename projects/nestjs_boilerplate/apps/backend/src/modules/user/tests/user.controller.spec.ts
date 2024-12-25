@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { UserController } from '../user.controller';
+import { UserControllerV1 } from '../user.controller.v1';
 import { UserCreateUseCase } from '../usecases/user-create.usecase';
 import {
   UserCreateRequestDto,
@@ -9,12 +9,12 @@ import {
 import { User } from '../user.entity';
 
 describe('UserController', () => {
-  let userController: UserController;
+  let userController: UserControllerV1;
   let userCreateUseCase: UserCreateUseCase;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      controllers: [UserController],
+      controllers: [UserControllerV1],
       providers: [
         {
           provide: UserCreateUseCase,
@@ -25,7 +25,7 @@ describe('UserController', () => {
       ],
     }).compile();
 
-    userController = module.get<UserController>(UserController);
+    userController = module.get<UserControllerV1>(UserControllerV1);
     userCreateUseCase = module.get<UserCreateUseCase>(UserCreateUseCase);
   });
 

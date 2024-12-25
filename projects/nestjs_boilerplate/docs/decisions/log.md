@@ -3,6 +3,8 @@
 - [2024.12.24 - ULID](#20241224---ulid)
 - [2024.12.24 - NestJS vs NextJS -\> Nest 사용하기로.](#20241224---nestjs-vs-nextjs---nest-사용하기로)
 - [2024.12.25 - 로깅 라이브러리: Pino](#20241225---로깅-라이브러리-pino)
+- [2024.12.25 - 로깅 레벨](#20241225---로깅-레벨)
+- [2024.12.25 - 스키마](#20241225---스키마)
 
 ## 2024.12.24 - ULID
 
@@ -36,3 +38,10 @@ NestJS: Pino
 | Complexity           | Generally simpler                                 | Can be complex due to extensive features            |
 | Ideal Use Cases      | Performance-critical, cloud-native, microservices | General-purpose, legacy applications, diverse needs |
 | Asynchronous Logging | Built-in Asynchronous Mode                        | Possible via Transports                             |
+
+## 2024.12.25 - 로깅 레벨
+
+500 미만: info
+500 이상: error
+
+## 2024.12.25 - 스키마

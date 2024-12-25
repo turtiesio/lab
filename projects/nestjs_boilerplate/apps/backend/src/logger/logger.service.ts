@@ -28,8 +28,9 @@ export class MyLogger implements LoggerService {
     });
   }
 
-  setContext(context: string) {
+  setContext(context: string): MyLogger {
     this.logger = this.logger.child({ context });
+    return this;
   }
 
   log(message: any, ...optionalParams: any[]) {
@@ -50,6 +51,14 @@ export class MyLogger implements LoggerService {
 
   verbose?(message: any, ...optionalParams: any[]) {
     this.callLogger('trace', message, optionalParams);
+  }
+
+  write(
+    level: 'info' | 'error' | 'warn' | 'debug' | 'trace',
+    message: string,
+    object?: Record<string, unknown>,
+  ) {
+    this.logger[level](object, message);
   }
 
   private callLogger(

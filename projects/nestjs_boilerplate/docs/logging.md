@@ -29,6 +29,8 @@
 8. Correlation IDs
    1. Trace ID(Middleware)
 
+## Logging context
+
 ## Windston vs Pino
 
 | Feature              | Pino                                              | Winston                                             |

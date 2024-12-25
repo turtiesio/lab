@@ -1,3 +1,4 @@
+// apps/backend/src/main.ts
 import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
@@ -5,16 +6,34 @@ import { ConfigService } from '@nestjs/config';
 import { MyLogger } from './logger/logger.service';
 import { AppConfig } from '@back/app.config';
 import { HttpExceptionFilter } from '@back/utils/http-exception.filter';
-import { ValidationPipe } from '@nestjs/common';
+import { ValidationPipe, VersioningType } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     bufferLogs: true,
   });
 
-  const logger = await app.resolve(MyLogger);
+  const loggerFactory = async (context: string = '') => {
+    const logger = await app.resolve(MyLogger);
+    if (context) {
+      logger.setContext(context);
+    }
+    return logger;
+  };
 
-  app.useGlobalFilters(new HttpExceptionFilter(logger));
+  app.useLogger(await loggerFactory('NestJS'));
+
+  app.useGlobalFilters(
+    new HttpExceptionFilter(await loggerFactory(HttpExceptionFilter.name)),
+  );
+
+  // Global Prefix: /api
+  app.setGlobalPrefix('api');
+
+  // API Versioning - URI Versioning
+  app.enableVersioning({
+    type: VersioningType.URI,
+  });
 
   // Enable validation globally
   app.useGlobalPipes(
@@ -22,6 +41,7 @@ async function bootstrap() {
       whitelist: true, // Strip out properties that are not in the DTO
       transform: true, // Automatically transform payloads to DTO objects
       forbidNonWhitelisted: true, // Throw an error if non-whitelisted properties are present
+      forbidUnknownValues: true, // Throw an error if unknown values are present
     }),
   );
   const configService = app.get(ConfigService);
@@ -38,8 +58,6 @@ async function bootstrap() {
     const document = SwaggerModule.createDocument(app, config);
     SwaggerModule.setup('api', app, document);
   }
-
-  app.useLogger(await app.resolve(MyLogger));
 
   await app.listen(configApp?.port ?? 3000);
 }
