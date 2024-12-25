@@ -17,12 +17,12 @@ export class UserSchema {
   @Column()
   name: string;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
   createdAt: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({ name: 'updated_at', type: 'timestamptz' })
   updatedAt: Date;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, name: 'deleted_at', type: 'timestamptz' })
   deletedAt: Date | null;
 }

@@ -7,6 +7,7 @@
   "license": "UNLICENSED",
   "scripts": {
     "build": "nest build && tsc-alias",
+    "clean": "rm -rf dist node_modules",
     "format": "prettier --write \"apps/**/*.ts\" \"libs/**/*.ts\"",
     "dev": "nest start --watch",
     "start": "nest start",
@@ -21,12 +22,17 @@
     "test:e2e": "jest --config ./apps/backend/test/jest-e2e.json",
     "start:db": "./scripts/start-postgres.sh",
     "start:db:force": "./scripts/start-postgres.sh --force",
-    "typeorm": "typeorm-ts-node-commonjs -d src/modules/database/dataSource.ts",
-    "migration:generate": "npm run typeorm migration:generate -- -n",
-    "migration:create": "npm run typeorm migration:create -- -n",
-    "migration:run": "npm run typeorm migration:run",
-    "migration:revert": "npm run typeorm migration:revert",
-    "clean": "rm -rf dist node_modules"
+    "br1": "",
+    "ensure_env": "env-cmd ./scripts/ensure_env.sh",
+    "typeorm": "typeorm-ts-node-commonjs -d apps/backend/src/modules/database/dataSource.ts",
+    "br3": "",
+    "schema:sync": "yarn ensure_env development && yarn typeorm schema:sync",
+    "schema:drop": "yarn ensure_env development && yarn typeorm schema:drop",
+    "br4": "",
+    "migration:gen": "yarn typeorm migration:generate ./apps/backend/migrations/migrations",
+    "migration:run": "yarn typeorm migration:run",
+    "migration:revert": "yarn typeorm migration:revert",
+    "migration:create": "typeorm-ts-node-commonjs migration:create ./apps/backend/migrations/initial-migration"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",
