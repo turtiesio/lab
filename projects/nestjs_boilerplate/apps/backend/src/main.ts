@@ -12,7 +12,9 @@ async function bootstrap() {
     bufferLogs: true,
   });
 
-  app.useGlobalFilters(new HttpExceptionFilter());
+  const logger = await app.resolve(MyLogger);
+
+  app.useGlobalFilters(new HttpExceptionFilter(logger));
 
   // Enable validation globally
   app.useGlobalPipes(
