@@ -45,21 +45,35 @@ async function bootstrap() {
     }),
   );
   const configService = app.get(ConfigService);
-  const configApp = configService.get<AppConfig>('app');
+  const configApp = configService.get<AppConfig>('app', { infer: true });
 
   // Swagger Setup (Conditional)
-  if (configApp?.nodeEnv === 'development') {
-    const config = new DocumentBuilder()
-      .setTitle('User Management API')
-      .setDescription('API documentation for the User Management service')
-      .setVersion('1.0')
-      .build();
-    const document = SwaggerModule.createDocument(app, config);
-    SwaggerModule.setup('api', app, document);
+  if (configApp.nodeEnv === 'development') {
+    SwaggerModule.setup(
+      '/api/docs',
+      app,
+      SwaggerModule.createDocument(
+        app,
+        new DocumentBuilder()
+          .setTitle('User Management API')
+          .setDescription('API documentation for the User Management service')
+          .setVersion('1.0')
+          .build(),
+      ),
+    );
   }
 
   app.use(helmet());
 
-  await app.listen(configApp?.port ?? 3000);
+  // Enable CORS
+  app.enableCors({
+    origin: [configApp.frontendDomain],
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    preflightContinue: false,
+    optionsSuccessStatus: 204,
+    credentials: true, // If you need to send cookies or auth headers
+  });
+
+  await app.listen(configApp.port);
 }
 bootstrap();

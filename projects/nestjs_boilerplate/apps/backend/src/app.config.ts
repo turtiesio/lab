@@ -28,12 +28,23 @@ class EnvironmentVariablesValidator {
   @Max(65535)
   @IsNotEmpty()
   APP_PORT: number;
+
+  @IsString()
+  @IsNotEmpty()
+  BACKEND_DOMAIN: string;
+
+  @IsString()
+  @IsNotEmpty()
+  FRONTEND_DOMAIN: string;
 }
 
 // Config Type
 export type AppConfig = {
-  nodeEnv?: string;
-  port?: number;
+  nodeEnv: string;
+  port: number;
+
+  backendDomain: string;
+  frontendDomain: string;
 };
 
 // Config Factory
@@ -42,6 +53,9 @@ export default registerAs<AppConfig>('app', () => {
 
   return {
     nodeEnv: process.env.NODE_ENV!,
-    port: parseInt(process.env.APP_PORT!, 10),
+    port: parseInt(process.env.APP_PORT || '3000', 10),
+
+    backendDomain: process.env.BACKEND_DOMAIN || 'http://localhost:3000',
+    frontendDomain: process.env.FRONTEND_DOMAIN || 'http://localhost:3000',
   };
 });
