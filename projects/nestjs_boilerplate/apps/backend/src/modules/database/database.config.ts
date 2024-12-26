@@ -1,5 +1,6 @@
 import { registerAs } from '@nestjs/config';
 import {
+  IsBoolean,
   IsInt,
   IsOptional,
   IsString,
@@ -8,6 +9,7 @@ import {
   ValidateIf,
 } from 'class-validator';
 import { validateConfig } from '@back/utils/validate-config';
+import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 
 // Validation Class
 class EnvironmentVariablesValidator {
@@ -42,26 +44,30 @@ class EnvironmentVariablesValidator {
   @IsOptional()
   @IsString()
   DATABASE_PASSWORD?: string;
+
+  @IsBoolean()
+  @IsOptional()
+  DATABASE_LOGGING?: boolean;
+
+  @IsInt()
+  @Min(1)
+  @IsOptional()
+  DATABASE_MAX_CONNECTIONS?: number;
+
+  @IsBoolean()
+  @IsOptional()
+  DATABASE_SSL_ENABLED?: boolean;
 }
 
-// Config Type
-export type DatabaseConfig = {
-  url?: string;
-  type?: string;
-  host?: string;
-  port?: number;
-  name?: string;
-  username?: string;
-  password?: string;
-};
+export type DatabaseConfig = {} & TypeOrmModuleOptions;
 
 // Config Factory
 export default registerAs<DatabaseConfig>('database', () => {
   validateConfig(process.env, EnvironmentVariablesValidator);
 
-  return {
+  const config: DatabaseConfig = {
     url: process.env.DATABASE_URL,
-    type: process.env.DATABASE_TYPE,
+    type: process.env.DATABASE_TYPE as 'postgres',
     host: process.env.DATABASE_HOST,
     port: process.env.DATABASE_PORT
       ? parseInt(process.env.DATABASE_PORT, 10)
@@ -69,5 +75,13 @@ export default registerAs<DatabaseConfig>('database', () => {
     name: process.env.DATABASE_NAME,
     username: process.env.DATABASE_USERNAME,
     password: process.env.DATABASE_PASSWORD,
+    //
+    logging: process.env.DATABASE_LOGGING === 'true',
+    ssl: process.env.DATABASE_SSL_ENABLED === 'true',
+    poolSize: process.env.DATABASE_MAX_CONNECTIONS
+      ? parseInt(process.env.DATABASE_MAX_CONNECTIONS, 10)
+      : 100, // Connection pool size
   };
+
+  return config;
 });
