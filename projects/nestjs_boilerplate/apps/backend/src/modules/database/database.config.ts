@@ -59,7 +59,7 @@ class EnvironmentVariablesValidator {
   DATABASE_SSL_ENABLED?: boolean;
 }
 
-export type DatabaseConfig = {} & TypeOrmModuleOptions;
+type DatabaseConfig = {} & TypeOrmModuleOptions;
 
 // Config Factory
 export default registerAs<DatabaseConfig>('database', () => {
