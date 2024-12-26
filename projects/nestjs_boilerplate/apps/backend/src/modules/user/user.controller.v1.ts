@@ -24,14 +24,8 @@ export class UserControllerV1 {
 
   @Post()
   @ApiOperation({ summary: 'Create a new user' })
-  @ApiBody({
-    description: 'The user to create',
-    type: UserCreateRequestDto,
-  })
-  @ApiCreatedResponse({
-    description: 'The user has been successfully created',
-    type: UserCreateResponseDto,
-  })
+  @ApiBody({ description: 'The user to create', type: UserCreateRequestDto })
+  @ApiCreatedResponse({ description: 'created', type: UserCreateResponseDto })
   async createUser(
     @Body() dto: UserCreateRequestDto,
   ): Promise<UserCreateResponseDto> {

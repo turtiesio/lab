@@ -14,20 +14,28 @@ export abstract class UserRepository {
    * @param user The user entity to save.
    * @returns A promise that resolves to the saved user entity.
    */
-  abstract save(user: User): Promise<User>;
+  abstract save({ user }: { user: User }): Promise<User>;
+
   /**
    * Finds a user by their ID.
-   * @param id The ID of the user to find.
-   * @param includeDeleted Optional parameter to include soft-deleted users.
-   * @returns A promise that resolves to the found user entity or null if not found.
+   * @param id The ID of the user to find
+   * @param includeDeleted Optional parameter to include soft-deleted users
+   * @returns A promise that resolves to the found user entity or null if not found
    */
-  abstract findById(id: string, includeDeleted?: boolean): Promise<User | null>;
+  abstract findById({
+    id,
+    includeDeleted,
+  }: {
+    id: string;
+    includeDeleted?: boolean;
+  }): Promise<User | null>;
+
   /**
    * Finds a user by their email address.
-   * @param email The email address of the user to find.
-   * @returns A promise that resolves to the found user entity or null if not found.
+   * @param email The email address of the user to find
+   * @returns A promise that resolves to the found user entity or null if not found
    */
-  abstract findByEmail(email: string): Promise<User | null>;
+  abstract findByEmail({ email }: { email: string }): Promise<User | null>;
 }
 
 /**
@@ -46,7 +54,7 @@ export class UserRepositoryImpl implements UserRepository {
    * @param user The user entity to save.
    * @returns A promise that resolves to the saved user entity.
    */
-  async save(user: User): Promise<User> {
+  async save({ user }: { user: User }): Promise<User> {
     return this.mapper.toDomain(
       await this.userModel.save(this.mapper.toSchema(user)),
     );
@@ -59,7 +67,13 @@ export class UserRepositoryImpl implements UserRepository {
    * @param includeDeleted Optional parameter to include soft-deleted users.
    * @returns A promise that resolves to the found user entity or null if not found.
    */
-  async findById(id: string, includeDeleted = false): Promise<User | null> {
+  async findById({
+    id,
+    includeDeleted = false,
+  }: {
+    id: string;
+    includeDeleted?: boolean;
+  }): Promise<User | null> {
     const queryOptions: FindOneOptions<UserSchema> = {
       where: { id },
     };
@@ -82,7 +96,7 @@ export class UserRepositoryImpl implements UserRepository {
    * @param email The email address of the user to find.
    * @returns A promise that resolves to the found user entity or null if not found.
    */
-  async findByEmail(email: string): Promise<User | null> {
+  async findByEmail({ email }: { email: string }): Promise<User | null> {
     const userSchema = await this.userModel.findOne({ where: { email } });
 
     if (!userSchema) {

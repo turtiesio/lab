@@ -12,23 +12,14 @@ export class RequestLoggingMiddleware implements NestMiddleware {
     res.on('finish', () => {
       this.logger.write(
         'info',
-        `${req.method} ${req.originalUrl} ${req.statusCode}`,
+        `${req.method} ${req.originalUrl} ${res.statusCode}`,
         {
-          request: {
-            hostname: req.hostname,
-            baseUrl: req.baseUrl,
-            url: req.url,
-            ip: req.ip,
-            method: req.method,
-            params: req.params,
-            query: req.query,
-            cookies: req.cookies,
-          },
-          resposne: {
-            statusCode: res.statusCode,
-            contentType: res.get('content-type'),
-            contentLength: res.get('content-length'),
-          },
+          method: req.method,
+          statusCode: res.statusCode,
+          hostname: req.hostname,
+          baseUrl: req.baseUrl,
+          url: req.url,
+          ip: req.ip,
         },
       );
     });

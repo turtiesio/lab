@@ -63,7 +63,22 @@ async function bootstrap() {
     );
   }
 
-  app.use(helmet());
+  app.use(
+    helmet({
+      contentSecurityPolicy: {
+        directives: {
+          defaultSrc: ["'self'"],
+          scriptSrc: ["'self'", "'unsafe-inline'"], // Be very careful with 'unsafe-inline'
+          imgSrc: ["'self'", 'data:'],
+          styleSrc: ["'self'", 'https://fonts.googleapis.com'],
+          fontSrc: ["'self'", 'https://fonts.gstatic.com'],
+          objectSrc: ["'none'"],
+          upgradeInsecureRequests: [],
+        },
+      },
+      crossOriginEmbedderPolicy: false, // Disable COEP if not needed
+    }),
+  );
 
   // Enable CORS
   app.enableCors({

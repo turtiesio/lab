@@ -1,5 +1,11 @@
 import { ulid } from 'ulid';
-import { IsEmail, MinLength, MaxLength, IsDate } from 'class-validator';
+import {
+  IsEmail,
+  MinLength,
+  MaxLength,
+  IsDate,
+  validateSync,
+} from 'class-validator';
 
 import { IsULID } from '../../utils/is-ulid';
 import { Mutable } from '../../utils/mutable';
@@ -117,6 +123,17 @@ export class User implements UserModel {
     user.createdAt = new Date();
     user.updatedAt = new Date();
     user.deletedAt = null;
+
+    const errors = validateSync(user, {
+      skipMissingProperties: false,
+      whitelist: true,
+      forbidNonWhitelisted: true,
+    });
+
+    if (errors.length > 0) {
+      throw new Error(`Validation failed: ${errors.toString()}`);
+    }
+
     return user;
   }
 }

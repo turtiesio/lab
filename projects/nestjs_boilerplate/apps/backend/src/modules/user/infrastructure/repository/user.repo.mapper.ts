@@ -3,7 +3,6 @@ import { User } from '@back/modules/user/user.entity';
 import { Mutable } from '@back/utils/mutable';
 import { Injectable } from '@nestjs/common';
 
-// return null
 export abstract class UserRepositoryMapper {
   abstract toDomain(schema: UserSchema): User;
   abstract toDomain(schema: UserSchema | null): User | null;

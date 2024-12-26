@@ -2,6 +2,8 @@
 
 SOLID, DRY, KISS, YAGNI!!!!!!!!!!!!!!!!!!
 
+ALWAYS TAKE ARG AS OBJECT!!!!!!!!!!!!!!!!!!
+
 INTERFACE DRIVEN DEVELOPMENT!!!!!!
 All class MUST define interface at start. for easy mocking and readability. define in same file.
 

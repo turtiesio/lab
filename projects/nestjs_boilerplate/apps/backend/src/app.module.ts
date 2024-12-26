@@ -3,11 +3,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { UserModule } from './modules/user/user.module';
 import appConfig from './app.config';
-import { AppDataSource } from './modules/database/dataSource';
 import { LoggerModule } from './logger/logger.module';
-import databaseConfig, {
-  DatabaseConfig,
-} from './modules/database/database.config';
+import databaseConfig from './modules/database/database.config';
 import { RequestLoggingMiddleware } from '@back/middlewares/request-logging.middleware';
 import { HealthModule } from './modules/health/health.module';
 
