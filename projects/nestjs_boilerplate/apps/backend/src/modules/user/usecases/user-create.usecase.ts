@@ -5,7 +5,7 @@ import {
   UserCreateResponseDto,
 } from './user-create.dto';
 import { UserRepositoryImpl } from '@back/modules/user/infrastructure/repository/user.repo';
-import { UserEmailExistsException } from '../exceptions/user-email-exists.exception';
+import { UserEmailExistsException } from '../user.exceptions';
 
 @Injectable()
 export class UserCreateUseCase {

@@ -5,7 +5,7 @@ import {
   UserDeleteResponseDto,
 } from './user-delete.dto';
 import { UserRepositoryImpl } from '../infrastructure/repository/user.repo';
-import { UserNotFoundException } from '../exceptions/user-not-found.exception';
+import { UserNotFoundException } from '../user.exceptions';
 
 @Injectable()
 export class UserDeleteUseCase {
