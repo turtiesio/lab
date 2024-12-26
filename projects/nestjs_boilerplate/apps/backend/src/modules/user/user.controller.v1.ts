@@ -24,14 +24,14 @@ export class UserControllerV1 {
 
   @Post()
   @ApiOperation({ summary: 'Create a new user' })
-  @ApiBody({ type: UserCreateRequestDto })
+  @ApiBody({
+    description: 'The user to create',
+    type: UserCreateRequestDto,
+  })
   @ApiCreatedResponse({
-    description: 'The user has been successfully created.',
+    description: 'The user has been successfully created',
     type: UserCreateResponseDto,
   })
-  @ApiBadRequestResponse({ description: 'Bad request.' })
-  @ApiConflictResponse({ description: 'Conflict. Email already exists.' })
-  @ApiResponse({ status: 500, description: 'Internal server error.' })
   async createUser(
     @Body() dto: UserCreateRequestDto,
   ): Promise<UserCreateResponseDto> {

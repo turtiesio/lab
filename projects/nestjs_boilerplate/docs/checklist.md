@@ -9,3 +9,14 @@
 - [ ] Security Aduit
 - [ ] Documentation Updates
 - [ ] Performance Monitoring
+
+## Once in a while
+
+- [ ] check `yarn.lock` or `package.lock` uploaded to git.
+
+##
+
+- [ ] Security
+  - [ ] helmet
+  - [ ] cors
+  - [ ] rate limit

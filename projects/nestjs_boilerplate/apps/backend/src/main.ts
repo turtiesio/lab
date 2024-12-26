@@ -1,4 +1,3 @@
-// apps/backend/src/main.ts
 import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
@@ -7,6 +6,7 @@ import { MyLogger } from './logger/logger.service';
 import { AppConfig } from '@back/app.config';
 import { HttpExceptionFilter } from '@back/utils/http-exception.filter';
 import { ValidationPipe, VersioningType } from '@nestjs/common';
+import helmet from 'helmet';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -53,11 +53,12 @@ async function bootstrap() {
       .setTitle('User Management API')
       .setDescription('API documentation for the User Management service')
       .setVersion('1.0')
-      .addTag('users')
       .build();
     const document = SwaggerModule.createDocument(app, config);
     SwaggerModule.setup('api', app, document);
   }
+
+  app.use(helmet());
 
   await app.listen(configApp?.port ?? 3000);
 }
