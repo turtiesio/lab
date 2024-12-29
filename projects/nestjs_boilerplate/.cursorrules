@@ -8,9 +8,9 @@ INTERFACE DRIVEN!
 All class MUST define interface at start. for easy mocking and readability. define in same file.
 
 ```ts
-export abstract class UserRepository { ... }
-class UserRepositoryImpl implements UserRepository { ... }
-export const UserRepositoryProvider: Provider = { ... }
+export abstract class DOMAINRepository { ... }
+class DOMAINRepositoryImpl implements DOMAINRepository { ... }
+export const DOMAINRepositoryProvider: Provider = { ... }
 ```
 
 TEST DRIVEN DEVELOPMENT: TEST is MUST!!
