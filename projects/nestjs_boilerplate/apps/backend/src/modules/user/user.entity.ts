@@ -3,6 +3,9 @@ import { IsEmail, MinLength, MaxLength } from 'class-validator';
 import { USER_MODULE } from '@back/modules/user/user.constants';
 import { BaseDomain } from '@back/core/base.domain';
 
+type ChangeNameOptions = { name: string; now?: Date };
+type MarkAsDeletedOptions = { now?: Date };
+
 export class User extends BaseDomain<User> {
   @IsEmail()
   readonly email: string;
@@ -13,11 +16,11 @@ export class User extends BaseDomain<User> {
 
   // Domain business logic
 
-  public changeName(name: string): User {
-    return this.update({ name });
+  public changeName({ name, now = new Date() }: ChangeNameOptions): User {
+    return this.clone({ name, updatedAt: now });
   }
 
-  public markAsDeleted(): User {
-    return this.softDelete();
+  public markAsDeleted({ now = new Date() }: MarkAsDeletedOptions): User {
+    return this.clone({ updatedAt: now, deletedAt: now });
   }
 }

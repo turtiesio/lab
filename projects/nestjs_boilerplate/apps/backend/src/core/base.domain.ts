@@ -3,18 +3,25 @@ import {
   ClassDataValidator,
 } from '@back/core/base.domain.validator';
 import { generateId } from '@back/utils/generate-id';
+import { IsNullable } from '@back/utils/is-nullable';
 import { IsULID } from '@back/utils/is-ulid';
-import { IsDate } from 'class-validator';
+import { IsDate, IsInt, ValidateIf } from 'class-validator';
 
-type WihtoutFunctions<T> = {
+export type WihtoutFunctions<T> = {
   [K in keyof T as T[K] extends Function ? never : K]: T[K];
 };
 
-type ManagedProperties = 'id' | 'createdAt' | 'updatedAt' | 'deletedAt';
+type ManagedProperties =
+  | 'id'
+  | 'createdAt'
+  | 'updatedAt'
+  | 'deletedAt'
+  | 'version';
 
 type PropsConstructor<T> = WihtoutFunctions<T>;
+type PropsClone<T> = Partial<WihtoutFunctions<T>>;
+
 type PropsCreate<T> = Omit<WihtoutFunctions<T>, ManagedProperties>;
-type PropsUpdate<T> = Partial<PropsCreate<T>>;
 type PropsRestore<T> = PropsConstructor<T>;
 
 interface BaseDomainInterface<T extends BaseDomainInterface<T>> {
@@ -37,40 +44,27 @@ export class BaseDomain<T extends BaseDomain<T>>
   readonly updatedAt: Date;
 
   @IsDate()
+  @IsNullable()
   readonly deletedAt: Date | null;
+
+  @IsInt()
+  readonly version: number; /** Incremented by 1 on each save(by database) */
 
   //
 
-  /** Do not use this constructor directly. Use `create` or `restore` instead. */
-  /** I could not find way to make this private and still have a good typing experience. */
+  @ValidateIf(() => false)
+  private validator: ClassDataValidator;
+
   public constructor(
     data: PropsConstructor<T>,
-    private validator: ClassDataValidator = new ClassDataValidatorImpl(),
+    validator: ClassDataValidator = new ClassDataValidatorImpl(),
   ) {
+    this.validator = validator;
     this.validator.validate({ data: Object.assign(this, data) });
   }
 
-  //
-
-  protected softDelete(): this {
-    return this.validator.validate({
-      data: Object.assign(this, {
-        deletedAt: new Date(),
-        updatedAt: new Date(),
-      }),
-    });
-  }
-
-  protected update(data: PropsUpdate<T>): this {
-    return this.validator.validate({
-      data: Object.assign(this, data, { updatedAt: new Date() }),
-    });
-  }
-
-  protected async updateAsync(data: PropsUpdate<T>): Promise<this> {
-    return this.validator.validateAsync({
-      data: Object.assign(this, data, { updatedAt: new Date() }),
-    });
+  protected clone(data: PropsClone<T>): this {
+    return new (this.constructor as any)({ ...this, ...data }, this.validator);
   }
 
   //
@@ -90,6 +84,7 @@ export class BaseDomain<T extends BaseDomain<T>>
       createdAt: _now,
       updatedAt: _now,
       deletedAt: null,
+      version: 0,
     });
   }
 

@@ -13,6 +13,8 @@ class DOMAINRepositoryImpl implements DOMAINRepository { ... }
 export const DOMAINRepositoryProvider: Provider = { ... }
 ```
 
+USE: generateId() for ULID generation.
+
 TEST DRIVEN DEVELOPMENT: TEST is MUST!!
 
 STRUCTURED BY FEATURE(MODULE)

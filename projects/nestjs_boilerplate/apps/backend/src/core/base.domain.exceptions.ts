@@ -12,7 +12,7 @@ export class DomainException extends Error {
       .map((error) => {
         const constraints = error.constraints
           ? Object.entries(error.constraints)
-              .map(([key, value]) => `${key}: ${value}`)
+              .map(([key, value]) => `(${key}: ${value})`)
               .join(', ')
           : '';
 

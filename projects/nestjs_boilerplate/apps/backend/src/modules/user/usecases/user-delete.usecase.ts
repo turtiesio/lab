@@ -22,7 +22,7 @@ export class UserDeleteUseCase {
     }
 
     return UserDeleteDtoMapper.fromEntity(
-      await this.userRepository.save({ user: user.markAsDeleted() }),
+      await this.userRepository.save({ user: user.markAsDeleted({}) }),
     );
   }
 }
