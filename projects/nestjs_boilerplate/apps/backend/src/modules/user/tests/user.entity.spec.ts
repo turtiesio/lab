@@ -29,7 +29,7 @@ describe('User', () => {
       email: 'test@example.com',
       name: 'Test User',
     });
-    user.setDeleted();
+    user.markAsDeleted();
     expect(user.deletedAt).toBeDefined();
     expect(user.updatedAt).toBeDefined();
   });

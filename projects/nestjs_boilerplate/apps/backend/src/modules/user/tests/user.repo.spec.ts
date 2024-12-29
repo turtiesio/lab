@@ -4,7 +4,6 @@ import { User } from '../user.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { UserSchema } from '../infrastructure/repository/user.repo.schema';
 import { Repository } from 'typeorm';
-import { UserRepositoryMapperImpl } from '../infrastructure/repository/user.repo.mapper';
 
 describe('UserRepository', () => {
   let userRepository: UserRepositoryImpl;
@@ -14,7 +13,6 @@ describe('UserRepository', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         UserRepositoryImpl,
-        UserRepositoryMapperImpl,
         {
           provide: getRepositoryToken(UserSchema),
           useValue: {
@@ -48,7 +46,7 @@ describe('UserRepository', () => {
         deletedAt: null,
       };
       (typeOrmRepository.save as jest.Mock).mockResolvedValue(userSchema);
-      const savedUser = await userRepository.save(user);
+      const savedUser = await userRepository.save({ user });
       expect(typeOrmRepository.save).toHaveBeenCalledWith(
         expect.objectContaining({
           id: user.id,
@@ -79,7 +77,7 @@ describe('UserRepository', () => {
         deletedAt: null,
       };
       (typeOrmRepository.findOne as jest.Mock).mockResolvedValue(userSchema);
-      const foundUser = await userRepository.findById(user.id);
+      const foundUser = await userRepository.findById({ id: user.id });
       expect(typeOrmRepository.findOne).toHaveBeenCalledWith({
         where: { id: user.id },
       });
@@ -91,7 +89,9 @@ describe('UserRepository', () => {
 
     it('should return null if user is not found', async () => {
       (typeOrmRepository.findOne as jest.Mock).mockResolvedValue(null);
-      const foundUser = await userRepository.findById('non-existent-id');
+      const foundUser = await userRepository.findById({
+        id: 'non-existent-id',
+      });
       expect(foundUser).toBeNull();
     });
   });

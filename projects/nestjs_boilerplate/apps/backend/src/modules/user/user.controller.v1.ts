@@ -9,9 +9,6 @@ import {
   ApiOperation,
   ApiBody,
   ApiCreatedResponse,
-  ApiBadRequestResponse,
-  ApiConflictResponse,
-  ApiResponse,
 } from '@nestjs/swagger';
 
 @ApiTags('users')

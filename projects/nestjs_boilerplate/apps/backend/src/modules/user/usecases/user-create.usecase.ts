@@ -4,12 +4,15 @@ import {
   UserCreateRequestDto,
   UserCreateResponseDto,
 } from './user-create.dto';
-import { UserRepositoryImpl } from '@back/modules/user/infrastructure/repository/user.repo';
+import { UserRepository } from '@back/modules/user/infrastructure/repository/user.repo';
 import { UserEmailExistsException } from '../user.exceptions';
 
 @Injectable()
 export class UserCreateUseCase {
-  constructor(@Inject() private readonly userRepository: UserRepositoryImpl) {}
+  constructor(
+    @Inject(UserRepository)
+    private readonly userRepository: UserRepository,
+  ) {}
 
   async execute(dto: UserCreateRequestDto): Promise<UserCreateResponseDto> {
     const existingUser = await this.userRepository.findByEmail({

@@ -1,15 +1,16 @@
 # Core Principles
 
-SOLID, DRY, KISS, YAGNI!!!!!!!!!!!!!!!!!!
+SOLID, DRY, KISS, YAGNI!
 
-ALWAYS TAKE ARG AS OBJECT!!!!!!!!!!!!!!!!!!
+ALWAYS TAKE ARG AS OBJECT! (for easy refactoring)
 
-INTERFACE DRIVEN DEVELOPMENT!!!!!!
+INTERFACE DRIVEN!
 All class MUST define interface at start. for easy mocking and readability. define in same file.
 
 ```ts
-interface IUser { ... }
-export class User implements IUser { ... }
+export abstract class UserRepository { ... }
+class UserRepositoryImpl implements UserRepository { ... }
+export const UserRepositoryProvider: Provider = { ... }
 ```
 
 TEST DRIVEN DEVELOPMENT: TEST is MUST!!

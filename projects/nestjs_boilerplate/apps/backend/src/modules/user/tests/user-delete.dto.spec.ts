@@ -43,7 +43,7 @@ describe('UserDeleteDto', () => {
       email: 'test@example.com',
       name: 'Test User',
     });
-    const deletedEntity = entity.setDeleted();
+    const deletedEntity = entity.markAsDeleted();
     const responseDto = UserDeleteDtoMapper.fromEntity(deletedEntity);
 
     expect(responseDto.id).toEqual(deletedEntity.id);

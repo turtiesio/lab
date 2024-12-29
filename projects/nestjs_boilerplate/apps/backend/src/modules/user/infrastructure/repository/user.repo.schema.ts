@@ -1,13 +1,8 @@
-import {
-  Entity,
-  PrimaryColumn,
-  Column,
-  CreateDateColumn,
-  UpdateDateColumn,
-} from 'typeorm';
+import { BaseSchema } from '@back/core/base.schema';
+import { Entity, PrimaryColumn, Column } from 'typeorm';
 
 @Entity('users')
-export class UserSchema {
+export class UserSchema extends BaseSchema {
   @PrimaryColumn()
   id: string;
 
@@ -16,13 +11,4 @@ export class UserSchema {
 
   @Column()
   name: string;
-
-  @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
-  createdAt: Date;
-
-  @UpdateDateColumn({ name: 'updated_at', type: 'timestamptz' })
-  updatedAt: Date;
-
-  @Column({ nullable: true, name: 'deleted_at', type: 'timestamptz' })
-  deletedAt: Date | null;
 }

@@ -4,12 +4,15 @@ import {
   UserDeleteRequestDto,
   UserDeleteResponseDto,
 } from './user-delete.dto';
-import { UserRepositoryImpl } from '../infrastructure/repository/user.repo';
+import { UserRepository } from '../infrastructure/repository/user.repo';
 import { UserNotFoundException } from '../user.exceptions';
 
 @Injectable()
 export class UserDeleteUseCase {
-  constructor(@Inject() private readonly userRepository: UserRepositoryImpl) {}
+  constructor(
+    @Inject(UserRepository)
+    private readonly userRepository: UserRepository,
+  ) {}
 
   async execute(dto: UserDeleteRequestDto): Promise<UserDeleteResponseDto> {
     const user = await this.userRepository.findById({ id: dto.id });
@@ -19,7 +22,7 @@ export class UserDeleteUseCase {
     }
 
     return UserDeleteDtoMapper.fromEntity(
-      await this.userRepository.save({ user: user.setDeleted() }),
+      await this.userRepository.save({ user: user.markAsDeleted() }),
     );
   }
 }
