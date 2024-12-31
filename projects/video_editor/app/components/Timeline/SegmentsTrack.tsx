@@ -31,7 +31,7 @@ export const SegmentsTrack: React.FC<SegmentsTrackProps> = ({
               : segment.enabled
               ? "bg-blue-500/50 border-blue-500"
               : "bg-gray-500/50 border-gray-500"
-          }`}
+          } cursor-move`}
           style={{
             left: `${(segment.start / duration) * 100}%`,
             width: `${((segment.end - segment.start) / duration) * 100}%`,

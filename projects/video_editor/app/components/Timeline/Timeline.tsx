@@ -1,75 +1,47 @@
-import React, { useRef, useEffect, MouseEvent } from "react";
+import React, { useRef, useEffect, MouseEvent, useState } from "react";
+import { VIDEO_EDITOR_CONFIG } from "../../config/videoEditor.config";
 import { ThumbnailTrack } from "./ThumbnailTrack";
 import { WaveformTrack } from "./WaveformTrack";
 import { SegmentsTrack } from "./SegmentsTrack";
 import { Playhead } from "./Playhead";
-import { VideoState, Segment, Thumbnail } from "../../types/video-editor.types";
+import { useVideoEditorStore } from "../../store/videoEditorStore";
 
-interface TimelineProps {
-  videoState: VideoState;
-  thumbnails: Thumbnail[];
-  waveformData: number[];
-  segments: Segment[];
-  onTimeUpdate: (time: number) => void;
-  onSegmentAdd: (start: number, end: number) => void;
-  onSegmentUpdate: (id: number, updates: Partial<Segment>) => void;
-  onSegmentDelete: (id: number) => void;
-  selectedSegmentId: number | null;
-  onSegmentSelect: (id: number | null) => void;
-  onTogglePlay: () => void;
-  onZoomChange: (zoom: number) => void;
-  videoRef: React.RefObject<HTMLVideoElement>;
-}
+export const Timeline: React.FC = () => {
+  const {
+    videoState,
+    segments,
+    selectedSegmentId,
+    thumbnails,
+    waveformData,
+    setCurrentTime,
+    updateSegment,
+    deleteSegment,
+    selectSegment,
+    addSegment,
+    togglePlay,
+    setZoom,
+    saveState,
+  } = useVideoEditorStore();
 
-export const Timeline: React.FC<TimelineProps> = ({
-  videoState,
-  thumbnails,
-  waveformData,
-  segments,
-  onTimeUpdate,
-  onSegmentAdd,
-  onSegmentUpdate,
-  onSegmentDelete,
-  selectedSegmentId,
-  onSegmentSelect,
-  onTogglePlay,
-  onZoomChange,
-  videoRef,
-}) => {
+  // Add state for drag selection box
+  const [dragBox, setDragBox] = useState<{
+    startX: number;
+    currentX: number;
+  } | null>(null);
+
   const timelineRef = useRef<HTMLDivElement>(null);
   const isDraggingRef = useRef(false);
   const dragStartTimeRef = useRef(0);
   const dragStartXRef = useRef(0);
   const isResizingRef = useRef<"left" | "right" | null>(null);
   const activeSegmentRef = useRef<number | null>(null);
-
-  // Add scroll container ref
   const scrollContainerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const handleKeyPress = (e: KeyboardEvent) => {
-      if (e.code === "Space") {
-        e.preventDefault();
-        onTogglePlay();
-      } else if (e.key === "+" || e.key === "=") {
-        e.preventDefault();
-        onZoomChange(Math.min(videoState.zoom + 0.1, 2));
-      } else if (e.key === "-") {
-        e.preventDefault();
-        onZoomChange(Math.max(videoState.zoom - 0.1, 0.5));
-      }
-    };
-
-    document.addEventListener("keydown", handleKeyPress);
-    return () => document.removeEventListener("keydown", handleKeyPress);
-  }, [onTogglePlay, onZoomChange, videoState.zoom]);
 
   const getTimeFromX = (x: number): number => {
     if (!timelineRef.current) return 0;
     const rect = timelineRef.current.getBoundingClientRect();
     const scrollLeft = scrollContainerRef.current?.scrollLeft || 0;
 
-    // Adjust x position based on scroll
     const adjustedX = x + scrollLeft - rect.left;
     const percentage = adjustedX / rect.width;
 
@@ -80,13 +52,11 @@ export const Timeline: React.FC<TimelineProps> = ({
   };
 
   const handleTimelineClick = (e: MouseEvent) => {
-    // Prevent click handling if we were dragging
     if (isDraggingRef.current || isResizingRef.current) {
       return;
     }
 
     const target = e.target as HTMLElement;
-    // Check if we clicked on a segment or its controls
     if (
       target.closest("[data-segment-id]") ||
       target.classList.contains("resize-handle-left") ||
@@ -95,11 +65,8 @@ export const Timeline: React.FC<TimelineProps> = ({
       return;
     }
 
-    const time = getTimeFromX(e.clientX);
-    if (videoRef.current) {
-      videoRef.current.currentTime = time;
-      onTimeUpdate(time);
-    }
+    const clickedTime = getTimeFromX(e.clientX);
+    setCurrentTime(clickedTime);
   };
 
   const handleMouseDown = (e: MouseEvent) => {
@@ -111,7 +78,7 @@ export const Timeline: React.FC<TimelineProps> = ({
         segmentEl.getAttribute("data-segment-id") || ""
       );
       activeSegmentRef.current = segmentId;
-      onSegmentSelect(segmentId);
+      selectSegment(segmentId);
 
       if (target.classList.contains("resize-handle-left")) {
         isResizingRef.current = "left";
@@ -123,11 +90,16 @@ export const Timeline: React.FC<TimelineProps> = ({
         dragStartTimeRef.current =
           segments.find((s) => s.id === segmentId)?.start || 0;
       }
+      // Add cursor styling
+      document.body.style.cursor = isResizingRef.current
+        ? "ew-resize"
+        : "grabbing";
     } else {
-      onSegmentSelect(null);
+      selectSegment(null);
       isDraggingRef.current = true;
+      // Just store the start position, don't show drag box yet
       dragStartXRef.current = e.clientX;
-      dragStartTimeRef.current = getTimeFromX(e.clientX);
+      document.body.style.cursor = "crosshair";
     }
   };
 
@@ -136,51 +108,83 @@ export const Timeline: React.FC<TimelineProps> = ({
 
     const currentTime = getTimeFromX(e.clientX);
 
+    // Handle segment resizing
     if (isResizingRef.current && activeSegmentRef.current !== null) {
       const segment = segments.find((s) => s.id === activeSegmentRef.current);
       if (!segment) return;
 
       if (isResizingRef.current === "left") {
-        onSegmentUpdate(activeSegmentRef.current, {
-          start: Math.min(currentTime, segment.end - 0.1),
+        updateSegment(activeSegmentRef.current, {
+          start: Math.min(
+            currentTime,
+            segment.end - VIDEO_EDITOR_CONFIG.MIN_SEGMENT_DURATION
+          ),
         });
       } else {
-        onSegmentUpdate(activeSegmentRef.current, {
-          end: Math.max(currentTime, segment.start + 0.1),
+        updateSegment(activeSegmentRef.current, {
+          end: Math.max(
+            currentTime,
+            segment.start + VIDEO_EDITOR_CONFIG.MIN_SEGMENT_DURATION
+          ),
         });
       }
-    } else if (isDraggingRef.current && activeSegmentRef.current !== null) {
-      const segment = segments.find((s) => s.id === activeSegmentRef.current);
-      if (!segment) return;
+      saveState();
 
-      const delta =
-        getTimeFromX(e.clientX) - getTimeFromX(dragStartXRef.current);
-      const newStart = Math.max(0, dragStartTimeRef.current + delta);
-      const duration = segment.end - segment.start;
-      const newEnd = Math.min(videoState.duration, newStart + duration);
+      // Handle segment dragging
+    } else if (isDraggingRef.current) {
+      if (activeSegmentRef.current !== null) {
+        const segment = segments.find((s) => s.id === activeSegmentRef.current);
+        if (!segment) return;
 
-      onSegmentUpdate(activeSegmentRef.current, {
-        start: newStart,
-        end: newEnd,
-      });
+        const dragDelta =
+          getTimeFromX(e.clientX) - getTimeFromX(dragStartXRef.current);
+        const newStart = Math.max(0, dragStartTimeRef.current + dragDelta);
+        const segmentDuration = segment.end - segment.start;
+        const newEnd = Math.min(
+          videoState.duration,
+          newStart + segmentDuration
+        );
+
+        updateSegment(activeSegmentRef.current, {
+          start: newStart,
+          end: newEnd,
+        });
+      } else {
+        const dragDistance = Math.abs(e.clientX - dragStartXRef.current);
+
+        if (dragDistance >= VIDEO_EDITOR_CONFIG.MIN_DRAG_THRESHOLD) {
+          setDragBox({
+            startX: dragStartXRef.current,
+            currentX: e.clientX,
+          });
+          dragStartTimeRef.current = getTimeFromX(dragStartXRef.current);
+        }
+      }
     }
   };
 
   const handleMouseUp = (e: MouseEvent) => {
-    if (isDraggingRef.current && !activeSegmentRef.current) {
+    if (isDraggingRef.current && !activeSegmentRef.current && dragBox) {
       const endTime = getTimeFromX(e.clientX);
       const startTime = dragStartTimeRef.current;
-      if (Math.abs(endTime - startTime) > 0.1) {
-        onSegmentAdd(
-          Math.min(startTime, endTime),
-          Math.max(startTime, endTime)
-        );
+      if (
+        Math.abs(endTime - startTime) > VIDEO_EDITOR_CONFIG.MIN_SEGMENT_DURATION
+      ) {
+        addSegment({
+          start: Math.min(startTime, endTime),
+          end: Math.max(startTime, endTime),
+          enabled: true,
+        });
+        saveState();
       }
     }
 
+    // Reset all states
     isDraggingRef.current = false;
     isResizingRef.current = null;
     activeSegmentRef.current = null;
+    setDragBox(null);
+    document.body.style.cursor = "default";
   };
 
   return (
@@ -210,10 +214,26 @@ export const Timeline: React.FC<TimelineProps> = ({
               segments={segments}
               duration={videoState.duration}
               selectedId={selectedSegmentId}
-              onSegmentDelete={onSegmentDelete}
-              onSegmentUpdate={onSegmentUpdate}
+              onSegmentDelete={deleteSegment}
+              onSegmentUpdate={updateSegment}
             />
           </div>
+
+          {/* Drag selection box */}
+          {dragBox && (
+            <div
+              className="absolute top-0 bottom-0 bg-blue-500/30 border border-blue-500"
+              style={{
+                left:
+                  (timelineRef.current
+                    ? Math.min(dragBox.startX, dragBox.currentX) -
+                      timelineRef.current.getBoundingClientRect().left +
+                      (scrollContainerRef.current?.scrollLeft || 0)
+                    : 0) + "px",
+                width: Math.abs(dragBox.currentX - dragBox.startX) + "px",
+              }}
+            />
+          )}
         </div>
         <Playhead
           currentTime={videoState.currentTime}
@@ -224,5 +244,3 @@ export const Timeline: React.FC<TimelineProps> = ({
     </div>
   );
 };
-
-export default Timeline;

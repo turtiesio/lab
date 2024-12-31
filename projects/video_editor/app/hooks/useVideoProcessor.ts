@@ -1,12 +1,17 @@
-import { useState, useEffect } from "react";
+import { useVideoEditorStore } from "../store/videoEditorStore";
+import { VIDEO_EDITOR_CONFIG } from "../config/videoEditor.config";
 import { Thumbnail } from "../types/video-editor.types";
 
 export const useVideoProcessor = (
-  videoRef: React.RefObject<HTMLVideoElement | null>
+  videoRef: React.RefObject<HTMLVideoElement>
 ) => {
-  const [thumbnails, setThumbnails] = useState<Thumbnail[]>([]);
-  const [waveformData, setWaveformData] = useState<number[]>([]);
-  const [error, setError] = useState<string | null>(null);
+  const {
+    setThumbnails,
+    setWaveformData,
+    setVideoState,
+    setVideoUrl,
+    saveState,
+  } = useVideoEditorStore();
 
   const generateWaveform = async (file: File) => {
     try {
@@ -15,7 +20,7 @@ export const useVideoProcessor = (
       const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
 
       // Calculate number of samples based on duration and resolution
-      const resolution = 0.005; // 0.1 second resolution
+      const resolution = VIDEO_EDITOR_CONFIG.WAVEFORM_RESOLUTION;
       const duration = audioBuffer.duration;
       const numSamples = Math.ceil(duration / resolution);
 
@@ -28,7 +33,7 @@ export const useVideoProcessor = (
 
       const source = offlineCtx.createBufferSource();
       const analyzer = offlineCtx.createAnalyser();
-      analyzer.fftSize = 2048;
+      analyzer.fftSize = VIDEO_EDITOR_CONFIG.WAVEFORM_FFT_SIZE;
       const bufferLength = analyzer.frequencyBinCount;
       const dataArray = new Float32Array(bufferLength);
 
@@ -65,22 +70,21 @@ export const useVideoProcessor = (
     } catch (error) {
       console.warn("Error generating waveform:", error);
       // Set a default waveform pattern on error
-      setWaveformData(Array(100).fill(0.5));
+      setWaveformData(
+        Array(100).fill(VIDEO_EDITOR_CONFIG.WAVEFORM_DEFAULT_VALUE)
+      );
     }
   };
 
   const processVideoFile = async (file: File) => {
-    setError(null);
-    setThumbnails([]);
-    setWaveformData([]);
-
     if (!file.type.startsWith("video/")) {
       throw new Error("Invalid file type. Please upload a video file.");
     }
 
-    const videoURL = URL.createObjectURL(file);
-
     try {
+      const videoURL = URL.createObjectURL(file);
+      setVideoUrl(videoURL);
+
       if (!videoRef.current) {
         throw new Error("Video element not found");
       }
@@ -107,14 +111,19 @@ export const useVideoProcessor = (
       // Generate thumbnails
       await generateThumbnails();
 
+      // Update store state
+      if (videoRef.current) {
+        setVideoState({ duration: videoRef.current.duration });
+      }
+      saveState();
+
       return videoURL;
     } catch (error) {
-      URL.revokeObjectURL(videoURL);
+      setVideoUrl(null);
       const errorMessage =
         error instanceof Error
           ? error.message
           : "Unknown error processing video";
-      setError(errorMessage);
       throw new Error(errorMessage);
     }
   };
@@ -124,7 +133,7 @@ export const useVideoProcessor = (
 
     const video = videoRef.current;
     const duration = video.duration;
-    const numThumbnails = 10;
+    const numThumbnails = VIDEO_EDITOR_CONFIG.THUMBNAIL_COUNT;
     const interval = duration / numThumbnails;
     const newThumbnails: Thumbnail[] = [];
 
@@ -132,8 +141,8 @@ export const useVideoProcessor = (
     const ctx = canvas.getContext("2d");
     if (!ctx) throw new Error("Could not create canvas context");
 
-    canvas.width = 160; // thumbnail width
-    canvas.height = 90; // thumbnail height
+    canvas.width = VIDEO_EDITOR_CONFIG.THUMBNAIL_WIDTH;
+    canvas.height = VIDEO_EDITOR_CONFIG.THUMBNAIL_HEIGHT;
 
     for (let i = 0; i < numThumbnails; i++) {
       const time = i * interval;
@@ -145,7 +154,10 @@ export const useVideoProcessor = (
             ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
             newThumbnails.push({
               time,
-              url: canvas.toDataURL("image/jpeg", 0.7),
+              url: canvas.toDataURL(
+                "image/jpeg",
+                VIDEO_EDITOR_CONFIG.THUMBNAIL_QUALITY
+              ),
             });
             resolve();
           };
@@ -159,9 +171,6 @@ export const useVideoProcessor = (
   };
 
   return {
-    thumbnails,
-    waveformData,
     processVideoFile,
-    error,
   };
 };
