@@ -5,7 +5,11 @@ import { ConfigService } from '@nestjs/config';
 import { MyLogger } from './logger/logger.service';
 import { AppConfig } from '@back/app.config';
 import { HttpExceptionFilter } from '@back/utils/http-exception.filter';
-import { ValidationPipe, VersioningType } from '@nestjs/common';
+import {
+  BadRequestException,
+  ValidationPipe,
+  VersioningType,
+} from '@nestjs/common';
 import helmet from 'helmet';
 
 async function bootstrap() {

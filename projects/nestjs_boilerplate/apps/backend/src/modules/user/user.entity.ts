@@ -1,4 +1,4 @@
-import { IsEmail, MinLength, MaxLength } from 'class-validator';
+import { IsEmail, Length, IsNotEmpty } from 'class-validator';
 
 import { USER_MODULE } from '@back/modules/user/user.constants';
 import { BaseDomain } from '@back/core/base.domain';
@@ -8,10 +8,11 @@ type MarkAsDeletedOptions = { now?: Date };
 
 export class User extends BaseDomain<User> {
   @IsEmail()
+  @IsNotEmpty()
   readonly email: string;
 
-  @MinLength(USER_MODULE.MIN_NAME_LENGTH)
-  @MaxLength(USER_MODULE.MAX_NAME_LENGTH)
+  @Length(USER_MODULE.MIN_NAME_LENGTH, USER_MODULE.MAX_NAME_LENGTH)
+  @IsNotEmpty()
   readonly name: string;
 
   // Domain business logic

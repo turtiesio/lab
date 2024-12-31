@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsString } from 'class-validator';
+import { IsEmail, IsString, Length } from 'class-validator';
 import { User } from '../user.entity';
+import { USER_MODULE } from '@back/modules/user/user.constants';
 
 export class UserCreateRequestDto {
   @ApiProperty({
@@ -12,6 +13,7 @@ export class UserCreateRequestDto {
 
   @ApiProperty({ example: 'John Doe', description: 'The name of the user' })
   @IsString()
+  @Length(USER_MODULE.MIN_NAME_LENGTH, USER_MODULE.MAX_NAME_LENGTH)
   name: string;
 }
 

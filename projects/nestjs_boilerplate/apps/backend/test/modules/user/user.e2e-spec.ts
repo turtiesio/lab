@@ -1,5 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import {
+  BadRequestException,
   INestApplication,
   Module,
   ValidationPipe,
@@ -82,7 +83,6 @@ describe('UserController (e2e)', () => {
 
   afterAll(async () => {
     await dataSource.destroy();
-    await app.close();
   });
 
   describe('POST /api/v1/users', () => {
@@ -153,7 +153,6 @@ describe('UserController (e2e)', () => {
         .post('/api/v1/users')
         .send(userData);
 
-      // Expect 400 for validation error, but received 500 due to an unhandled exception in the handler.
       expect(response.status).toBe(400);
     });
   });
@@ -189,7 +188,6 @@ describe('UserController (e2e)', () => {
         '/api/v1/users/non-existent-id',
       );
 
-      // Expect 404 for not found, but received 500 because the datasource was not found.
       expect(response.status).toBe(404);
     });
   });

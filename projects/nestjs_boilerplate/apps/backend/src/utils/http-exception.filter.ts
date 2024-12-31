@@ -32,11 +32,11 @@ export class HttpExceptionFilter implements ExceptionFilter {
         message = exceptionResponse;
       } else if (typeof exceptionResponse === 'object') {
         message = (exceptionResponse as any).message || message;
-        errorDetails = exceptionResponse; // Capture details if available
+        errorDetails = exceptionResponse;
       }
     } else if (exception instanceof Error) {
       message = exception.message;
-      errorDetails = exception.stack; // Log stack trace for internal errors
+      errorDetails = exception.stack;
     }
 
     // Log errors
