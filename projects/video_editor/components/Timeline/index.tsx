@@ -15,6 +15,12 @@ export interface TimelineProps {
   }[];
   videoUrl: string;
   isPlaying: boolean;
+  onAddSegment: (segment: {
+    start: number;
+    end: number;
+    type: "silence" | "speech";
+  }) => void;
+  onRemoveSegment: (index: number) => void;
 }
 
 export default function Timeline({

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import Timeline from "../components/Timeline";
 
 export default function Home() {
@@ -24,17 +25,12 @@ export default function Home() {
   return (
     <main className="flex min-h-screen flex-col items-center p-8">
       <h1 className="text-4xl font-bold mb-8">Video Editor</h1>
-      <div className="w-full max-w-4xl">
-        <Timeline
-          duration={duration}
-          currentTime={currentTime}
-          onTimeUpdate={setCurrentTime}
-          waveformData={waveformData}
-          segments={segments}
-          videoUrl={videoUrl}
-          isPlaying={isPlaying}
-        />
-      </div>
+      <Link
+        href="/editor"
+        className="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition-colors mb-8"
+      >
+        Open Advanced Editor
+      </Link>
     </main>
   );
 }
