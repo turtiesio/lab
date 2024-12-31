@@ -1,2 +1,2 @@
-use absolute import: e.g: import { useEditorStore } from "@/components/editor/store";
+use absolute import: e.g: import { useEditorStore } from "@/app/components"; "@/app/store";
 always use double quote
