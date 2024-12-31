@@ -8,6 +8,8 @@ import databaseConfig from './modules/database/database.config';
 import { RequestLoggingMiddleware } from '@back/middlewares/request-logging.middleware';
 import { HealthModule } from './modules/health/health.module';
 import { AppController } from '@back/app.controller';
+import { RedisModule } from './modules/redis/redis.module';
+import { ApiThrottlerModule } from './modules/throttler/throttler.module';
 
 @Module({
   imports: [
@@ -25,6 +27,8 @@ import { AppController } from '@back/app.controller';
     UserModule,
     LoggerModule,
     HealthModule,
+    RedisModule,
+    ApiThrottlerModule,
   ],
   controllers: [AppController],
 })

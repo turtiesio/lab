@@ -1,4 +1,4 @@
-import { NestFactory } from '@nestjs/core';
+import { NestFactory, Reflector } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
@@ -11,6 +11,9 @@ import {
   VersioningType,
 } from '@nestjs/common';
 import helmet from 'helmet';
+import { ThrottlerGuard } from '@nestjs/throttler';
+import { Redis } from 'ioredis';
+import { RedisThrottlerStorage } from '@back/utils/redis-throttler-storage';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -31,6 +34,29 @@ async function bootstrap() {
     new HttpExceptionFilter(await loggerFactory(HttpExceptionFilter.name)),
   );
 
+  // Apply ThrottlerGuard globally
+  const configService = app.get(ConfigService);
+  const redis = new Redis({
+    host: configService.get('redis.host'),
+    port: configService.get('redis.port'),
+    password: configService.get('redis.password'),
+    db: configService.get('redis.db'),
+  });
+  const storage = new RedisThrottlerStorage(redis);
+  const reflector = app.get(Reflector);
+  app.useGlobalGuards(
+    new ThrottlerGuard(
+      [
+        {
+          ttl: 60,
+          limit: 100,
+        },
+      ],
+      storage,
+      reflector,
+    ),
+  );
+
   // Global Prefix: /api
   app.setGlobalPrefix('api');
 
@@ -48,7 +74,6 @@ async function bootstrap() {
       forbidUnknownValues: true, // Throw an error if unknown values are present
     }),
   );
-  const configService = app.get(ConfigService);
   const configApp = configService.get<AppConfig>('app', { infer: true });
 
   // Swagger Setup (Conditional)
