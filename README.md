@@ -13,4 +13,5 @@ make update
 
 | Project                                           | Purpose                               | Date Started | Date Modified |
 | ------------------------------------------------- | ------------------------------------- | ------------ | ------------- |
-| [nestjs_boilerplate](projects/nestjs_boilerplate) | NestJS 에 적합한 구조를 테스트합니다. | 2024-12-22   | 2024-12-22 |
+| [nestjs_boilerplate](projects/nestjs_boilerplate) | NestJS 에 적합한 구조를 테스트합니다. | 2024-12-22   | 2024-12-22    |
+| [video_editor](projects/video_editor)             | test video editor                     | 2024-12-31   | 2024-12-31    |
