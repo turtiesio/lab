@@ -49,11 +49,7 @@ clean:
 
 # Start database services
 db-up:
-	docker-compose -f $(DOCKER_COMPOSE_FILE) up -d
-
-# Stop database services
-db-down:
-	docker-compose -f $(DOCKER_COMPOSE_FILE) down
+	yarn start:db:force
 
 # Help command
 help:

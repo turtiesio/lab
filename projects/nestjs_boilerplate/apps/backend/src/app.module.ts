@@ -7,6 +7,7 @@ import { LoggerModule } from './logger/logger.module';
 import databaseConfig from './modules/database/database.config';
 import { RequestLoggingMiddleware } from '@back/middlewares/request-logging.middleware';
 import { HealthModule } from './modules/health/health.module';
+import { AppController } from '@back/app.controller';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { HealthModule } from './modules/health/health.module';
     LoggerModule,
     HealthModule,
   ],
+  controllers: [AppController],
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {

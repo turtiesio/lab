@@ -1,45 +1,87 @@
-import { Test } from '@nestjs/testing';
-import { INestApplication } from '@nestjs/common';
+import { Test, TestingModule } from '@nestjs/testing';
+import {
+  INestApplication,
+  Module,
+  ValidationPipe,
+  VersioningType,
+} from '@nestjs/common';
 import * as request from 'supertest';
 import { TypeOrmModule, getRepositoryToken } from '@nestjs/typeorm';
-import { AppModule } from '@back/app.module';
 import { UserSchema } from '@back/modules/user/infrastructure/repository/user.repo.schema';
-import { Repository } from 'typeorm';
+import { Repository, DataSource } from 'typeorm';
 import { generateId } from '@back/utils/generate-id';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import databaseConfig from '@back/modules/database/database.config';
+import { TypeOrmModuleOptions } from '@nestjs/typeorm';
+import { UserCreateUseCase } from '@back/modules/user/usecases/user-create.usecase';
+import { UserDeleteUseCase } from '@back/modules/user/usecases/user-delete.usecase';
+import { UserRepositoryProvider } from '@back/modules/user/infrastructure/repository/user.repo';
+import { UserControllerV1 } from '@back/modules/user/user.controller.v1';
+import { UserModule } from '@back/modules/user/user.module';
+
+@Module({
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [databaseConfig],
+      envFilePath: ['.env'],
+    }),
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => ({
+        ...(configService.get<TypeOrmModuleOptions>('database') as object),
+        entities: [UserSchema],
+        synchronize: true,
+      }),
+      inject: [ConfigService],
+    }),
+    TypeOrmModule.forFeature([UserSchema]),
+    UserModule,
+  ],
+})
+class TestModule {}
 
 describe('UserController (e2e)', () => {
   let app: INestApplication;
   let userRepository: Repository<UserSchema>;
+  let dataSource: DataSource;
 
   beforeAll(async () => {
-    const moduleFixture = await Test.createTestingModule({
-      imports: [
-        AppModule,
-        TypeOrmModule.forRoot({
-          type: 'postgres',
-          host: process.env.DATABASE_HOST || 'localhost',
-          port: parseInt(process.env.DATABASE_PORT || '5432', 10),
-          username: process.env.DATABASE_USERNAME || 'postgres',
-          password: process.env.DATABASE_PASSWORD || 'password',
-          database: process.env.DATABASE_NAME || 'test_db',
-          entities: [UserSchema],
-          synchronize: true,
-        }),
-      ],
+    jest.setTimeout(30000);
+
+    const moduleFixture: TestingModule = await Test.createTestingModule({
+      imports: [TestModule],
     }).compile();
 
     app = moduleFixture.createNestApplication();
     userRepository = moduleFixture.get<Repository<UserSchema>>(
       getRepositoryToken(UserSchema),
     );
+
+    dataSource = moduleFixture.get<DataSource>(DataSource);
+
+    app.useGlobalPipes(
+      new ValidationPipe({
+        whitelist: true,
+        transform: true,
+        forbidNonWhitelisted: true,
+        forbidUnknownValues: true,
+      }),
+    );
+    app.setGlobalPrefix('api');
+    app.enableVersioning({
+      type: VersioningType.URI,
+    });
+
     await app.init();
   });
 
   beforeEach(async () => {
-    await userRepository.clear();
+    await userRepository.delete({});
   });
 
   afterAll(async () => {
+    await dataSource.destroy();
     await app.close();
   });
 
@@ -74,6 +116,7 @@ describe('UserController (e2e)', () => {
         createdAt: new Date(),
         updatedAt: new Date(),
         deletedAt: null,
+        version: 1,
       };
       await userRepository.save(existingUser);
 
@@ -106,10 +149,12 @@ describe('UserController (e2e)', () => {
         name: 'A',
       };
 
-      await request(app.getHttpServer())
+      const response = await request(app.getHttpServer())
         .post('/api/v1/users')
-        .send(userData)
-        .expect(400);
+        .send(userData);
+
+      // Expect 400 for validation error, but received 500 due to an unhandled exception in the handler.
+      expect(response.status).toBe(400);
     });
   });
 
@@ -122,6 +167,7 @@ describe('UserController (e2e)', () => {
         createdAt: new Date(),
         updatedAt: new Date(),
         deletedAt: null,
+        version: 1,
       };
       await userRepository.save(user);
 
@@ -139,9 +185,12 @@ describe('UserController (e2e)', () => {
     });
 
     it('should return 404 if user does not exist', async () => {
-      await request(app.getHttpServer())
-        .delete('/api/v1/users/non-existent-id')
-        .expect(404);
+      const response = await request(app.getHttpServer()).delete(
+        '/api/v1/users/non-existent-id',
+      );
+
+      // Expect 404 for not found, but received 500 because the datasource was not found.
+      expect(response.status).toBe(404);
     });
   });
 });
