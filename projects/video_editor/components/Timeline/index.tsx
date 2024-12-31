@@ -13,6 +13,8 @@ export interface TimelineProps {
     end: number;
     type: "silence" | "speech";
   }[];
+  videoUrl: string;
+  isPlaying: boolean;
 }
 
 export default function Timeline({
@@ -21,12 +23,19 @@ export default function Timeline({
   onTimeUpdate,
   waveformData,
   segments,
+  videoUrl,
+  isPlaying,
 }: TimelineProps) {
   const timelineRef = useRef<HTMLDivElement>(null);
 
   return (
     <div className="flex flex-col space-y-4 relative" ref={timelineRef}>
-      <VideoPreview />
+      <VideoPreview
+        videoUrl={videoUrl}
+        currentTime={currentTime}
+        isPlaying={isPlaying}
+        onTimeUpdate={onTimeUpdate}
+      />
       <div className="relative w-full h-20 bg-gray-800 rounded-lg overflow-hidden">
         <Waveform data={waveformData} />
         {segments.map((segment, index) => (

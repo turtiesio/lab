@@ -5,6 +5,8 @@ import Timeline from "../components/Timeline";
 
 export default function Home() {
   const [currentTime, setCurrentTime] = useState(0);
+  const [videoUrl, setVideoUrl] = useState("");
+  const [isPlaying, setIsPlaying] = useState(false);
   const duration = 120; // 2 minutes
   const segments: { start: number; end: number; type: "speech" | "silence" }[] =
     [
@@ -29,6 +31,8 @@ export default function Home() {
           onTimeUpdate={setCurrentTime}
           waveformData={waveformData}
           segments={segments}
+          videoUrl={videoUrl}
+          isPlaying={isPlaying}
         />
       </div>
     </main>
