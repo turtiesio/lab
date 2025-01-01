@@ -1,11 +1,23 @@
+import { Controls, Timeline } from "@/components/Editor";
+import {
+  usePlayback,
+  useTimelineOperations,
+} from "@/hooks/useTimelineOperations";
+import { useEditorStore } from "@/lib/editor/store";
+
 export default function Home() {
+  const { addTrack, addContent } = useTimelineOperations();
+  const { play, pause, seek } = usePlayback();
+  const tracks = useEditorStore((state) => state.editor.getState().tracks);
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <div className="w-full max-w-4xl">
-          <h1 className="text-4xl font-bold mb-8">Video Editor</h1>
-        </div>
-      </main>
+    <div>
+      <Controls onPlay={play} onPause={pause} onSeek={seek} />
+      <Timeline
+        tracks={tracks}
+        onAddTrack={addTrack}
+        onAddContent={addContent}
+      />
     </div>
   );
 }
